@@ -1,8 +1,4 @@
-<p align="center">
-    <a href="https://github.com/shakee93/vue-toasted" target="_blank">
-    <img width="250"src="https://freshpixl.com/vue-toasted.png?new">
-    </a>
-</p> 
+# Toasted
 
 <p align="center">
   <a href="https://www.npmjs.com/package/vue-toasted"><img src="https://img.shields.io/npm/v/vue-toasted.svg?style=flat-square"/> <img src="https://img.shields.io/npm/dm/vue-toasted.svg?style=flat-square"/></a>

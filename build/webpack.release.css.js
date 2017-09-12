@@ -2,15 +2,13 @@ var path = require('path')
 var webpack = require('webpack')
 var  ExtractTextPlugin =  require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 	entry: {
 		'toasted.min' : './src/sass/toast.scss'
 	},
 	output: {
-		path: './dist',
-		publicPath: '/dist/',
+		path: path.join(__dirname, '../dist'),
 		filename: '[name].css',
 		libraryTarget: 'umd'
 	},

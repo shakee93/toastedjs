@@ -1,7 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
 var autoprefixer = require('autoprefixer')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 	entry: {
@@ -9,8 +8,7 @@ module.exports = {
 		'toasted.min' : './src/index.js'
 	},
 	output: {
-		path: './dist',
-		publicPath: '/dist/',
+		path: path.join(__dirname, '../dist'),
 		filename: '[name].js',
 		libraryTarget: 'umd'
 	},
@@ -60,6 +58,7 @@ if (process.env.NODE_ENV === 'production') {
 	module.exports.devtool = '#source-map'
 	// http://vue-loader.vuejs.org/en/workflow/production.html
 	module.exports.plugins = (module.exports.plugins || []).concat([
+		new webpack.optimize.ModuleConcatenationPlugin(),
 		new webpack.DefinePlugin({
 			'process.env': {
 				NODE_ENV: '"production"'
