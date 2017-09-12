@@ -187,7 +187,6 @@ module.exports = {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__show__ = __webpack_require__(6);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Extender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Toasted; });
 /* unused harmony export _show */
 /* unused harmony export initiateCustomToasts */
@@ -200,18 +199,6 @@ var uuid = __webpack_require__(9);
 __webpack_require__(7).polyfill();
 
 /**
- * Allows Toasted to be Extended
- *
- * @type {{hook: {}, verifyHook: Extender.verifyHook}}
- */
-var Extender = {
-	hook: {},
-	verifyHook: function verifyHook(hook) {
-		return !!(hook && typeof hook === 'function');
-	}
-};
-
-/**
  * Toast
  * core instance of toast
  *
@@ -221,8 +208,6 @@ var Extender = {
  */
 var Toasted = function Toasted(_options) {
 	var _this = this;
-
-	if (!_options) _options = {};
 
 	/**
   * Unique id of the toast
@@ -416,7 +401,7 @@ var register = function register(instance, name, message, options) {
 	initiateCustomToasts(instance);
 };
 
-/* unused harmony default export */ var _unused_webpack_default_export = { Toasted: Toasted, Extender: Extender };
+/* unused harmony default export */ var _unused_webpack_default_export = { Toasted: Toasted };
 
 /***/ }),
 /* 2 */
@@ -602,9 +587,7 @@ var toastObject = function toastObject(el) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hammerjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_hammerjs__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__animations__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__object__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__toast__ = __webpack_require__(1);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 
 
 
@@ -679,11 +662,6 @@ var parseOptions = function parseOptions(options) {
 	options.position && options.containerClass.push(options.position.trim());
 	options.fullWidth && options.containerClass.push('full-width');
 	options.fitToScreen && options.containerClass.push('fit-to-screen');
-
-	// HOOK : options
-	if (__WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].verifyHook(__WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].hook.options)) {
-		options = __WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].hook.options(options, _options);
-	}
 
 	_options = options;
 	return options;
@@ -836,6 +814,27 @@ var createAction = function createAction(action, toastObject) {
 		}
 	}
 
+	// initiate push with ready
+	if (action.push) {
+
+		el.addEventListener('click', function (e) {
+			e.preventDefault();
+
+			// check if vue router passed through global options
+			if (!_options.router && _options.router.constructor.name !== "VueRouter") {
+				console.warn('[vue-toasted] : Vue Router instance is not attached. please check the docs');
+				return;
+			}
+
+			_options.router.push(action.push);
+
+			// fade away toast after action.
+			if (!action.push.dontClose) {
+				toastObject.goAway(0);
+			}
+		});
+	}
+
 	if (action.onClick && typeof action.onClick === 'function') {
 		el.addEventListener('click', function (e) {
 
@@ -844,11 +843,6 @@ var createAction = function createAction(action, toastObject) {
 				action.onClick(e, toastObject);
 			}
 		});
-	}
-
-	// HOOK : action
-	if (__WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].verifyHook(__WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].hook.action)) {
-		__WEBPACK_IMPORTED_MODULE_3__toast__["b" /* Extender */].hook.action(el, action, toastObject, _options);
 	}
 
 	return el;
@@ -3893,11 +3887,24 @@ module.exports = 0;
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_toast__ = __webpack_require__(1);
+throw new Error("Cannot find module \"./toast.vue\"");
 
 
-__WEBPACK_IMPORTED_MODULE_0__js_toast__["a" /* Toasted */].extend = __WEBPACK_IMPORTED_MODULE_0__js_toast__["b" /* Extender */];
 
-/* harmony default export */ __webpack_exports__["default"] = __WEBPACK_IMPORTED_MODULE_0__js_toast__["a" /* Toasted */];
+var Toasted = {
+    install: function install(Vue, options) {
+        var Toast = new __WEBPACK_IMPORTED_MODULE_0__js_toast__["a" /* Toasted */](options);
+        Vue.component('toasted', __WEBPACK_IMPORTED_MODULE_1__toast_vue___default.a);
+        Vue.toasted = Vue.prototype.$toasted = Toast;
+    }
+};
+
+// register plugin if it is used via cdn or directly as a script tag
+if (typeof window !== 'undefined' && window.Vue) {
+    window.Toasted = Toasted;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = Toasted;
 
 /***/ })
 /******/ ]);
