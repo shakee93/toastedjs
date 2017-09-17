@@ -192,9 +192,9 @@ exports.initiateCustomToasts = exports._show = exports.Toasted = exports.Extende
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _show2 = __webpack_require__(5);
+var _toast = __webpack_require__(18);
 
-var _show3 = _interopRequireDefault(_show2);
+var _toast2 = _interopRequireDefault(_toast);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -364,7 +364,9 @@ var _show = exports._show = function _show(instance, message, options) {
 	// merge the cached global options with options
 	Object.assign(_options, options);
 
-	return (0, _show3.default)(instance, message, _options);
+	var toast = new _toast2.default(instance);
+
+	return toast.create(message, _options);
 };
 
 /**
@@ -527,371 +529,19 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _toast = __webpack_require__(1);
+var _toasted = __webpack_require__(1);
 
-_toast.Toasted.extend = _toast.Extender;
+_toasted.Toasted.extend = _toasted.Extender;
 
 // register plugin to window
 if (typeof window !== 'undefined') {
-	window.Toasted = _toast.Toasted;
+	window.Toasted = _toasted.Toasted;
 }
 
-exports.default = _toast.Toasted;
+exports.default = _toasted.Toasted;
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.default = function (instance, message, options) {
-
-	// share the instance across
-	_instance = instance;
-
-	options = parseOptions(options);
-	var container = document.getElementById(_instance.id);
-
-	// Create toast container if it does not exist
-	if (container === null) {
-		// create notification container
-		container = document.createElement('div');
-		container.id = _instance.id;
-
-		document.body.appendChild(container);
-	}
-
-	options.containerClass.unshift('toasted-container');
-
-	// check if the container classes has changed if so update it
-	if (container.className !== options.containerClass.join(' ')) {
-		container.className = "";
-		options.containerClass.forEach(function (className) {
-			container.classList.add(className);
-		});
-	}
-
-	// Select and append toast
-	var newToast = createToast(message, options);
-
-	// only append toast if message is not undefined
-	if (message) {
-		container.appendChild(newToast);
-	}
-
-	newToast.style.opacity = 0;
-
-	// Animate toast in
-	_animations2.default.animateIn(newToast);
-
-	// Allows timer to be pause while being panned
-	var timeLeft = options.duration;
-	var counterInterval = void 0;
-	if (timeLeft !== null) {
-		counterInterval = setInterval(function () {
-			if (newToast.parentNode === null) window.clearInterval(counterInterval);
-
-			// If toast is not being dragged, decrease its time remaining
-			if (!newToast.classList.contains('panning')) {
-				timeLeft -= 20;
-			}
-
-			if (timeLeft <= 0) {
-				// Animate toast out
-
-				_animations2.default.animateOut(newToast, function () {
-					// Call the optional callback
-					if (typeof options.onComplete === "function") options.onComplete();
-					// Remove toast after it times out
-					if (newToast.parentNode) {
-						newToast.parentNode.removeChild(newToast);
-					}
-				});
-
-				window.clearInterval(counterInterval);
-			}
-		}, 20);
-	}
-
-	return (0, _object.toastObject)(newToast);
-};
-
-var _hammerjs = __webpack_require__(6);
-
-var _hammerjs2 = _interopRequireDefault(_hammerjs);
-
-var _animations = __webpack_require__(2);
-
-var _animations2 = _interopRequireDefault(_animations);
-
-var _object = __webpack_require__(8);
-
-var _toast = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _options = {};
-var _instance = null;
-/**
- * parse Options
- *
- * @param options
- * @returns {{el: *, text: text, goAway: goAway}}
- */
-var parseOptions = function parseOptions(options) {
-
-	// class name to be added on the toast
-	options.className = options.className || null;
-
-	// complete call back of the toast
-	options.onComplete = options.onComplete || null;
-
-	// toast position
-	options.position = options.position || "top-right";
-
-	// toast duration
-	options.duration = options.duration || null;
-
-	// normal type will allow the basic color
-	options.theme = options.theme || "primary";
-
-	// normal type will allow the basic color
-	options.type = options.type || "default";
-
-	// class name to be added on the toast container
-	options.containerClass = options.containerClass || null;
-
-	// check if the fullWidth is enabled
-	options.fullWidth = options.fullWidth || false;
-
-	// get icon name
-	options.icon = options.icon || null;
-
-	// get action name
-	options.action = options.action || null;
-
-	// check if the toast needs to be fitted in the screen (no margin gap between screen)
-	options.fitToScreen = options.fitToScreen || null;
-
-	/* transform options */
-
-	// toast class
-	if (options.className && typeof options.className === "string") {
-		options.className = options.className.split(' ');
-	}
-
-	if (!options.className) {
-		options.className = [];
-	}
-
-	options.theme && options.className.push(options.theme.trim());
-	options.type && options.className.push(options.type);
-
-	// toast container class
-	if (options.containerClass && typeof options.containerClass === "string") {
-		options.containerClass = options.containerClass.split(' ');
-	}
-
-	if (!options.containerClass) {
-		options.containerClass = [];
-	}
-
-	options.position && options.containerClass.push(options.position.trim());
-	options.fullWidth && options.containerClass.push('full-width');
-	options.fitToScreen && options.containerClass.push('fit-to-screen');
-
-	// HOOK : options
-	if (_toast.Extender.verifyHook(_toast.Extender.hook.options)) {
-		options = _toast.Extender.hook.options(options, _options);
-	}
-
-	_options = options;
-	return options;
-};
-
-var createToast = function createToast(html, options) {
-
-	// Create toast
-	var toast = document.createElement('div');
-	toast.classList.add('toasted');
-
-	if (options.className) {
-		options.className.forEach(function (className) {
-			toast.classList.add(className);
-		});
-	}
-
-	// add material icon if available
-	if (options.icon) {
-
-		var iel = document.createElement('i');
-		iel.classList.add('material-icons');
-
-		if (options.icon.after && options.icon.name) {
-			iel.textContent = options.icon.name;
-			iel.classList.add('after');
-			html += iel.outerHTML;
-		} else if (options.icon.name) {
-			iel.textContent = options.icon.name;
-			html = iel.outerHTML + html;
-		} else {
-			iel.textContent = options.icon;
-			html = iel.outerHTML + html;
-		}
-	}
-
-	// If type of parameter is HTML Element
-	if ((typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? html instanceof HTMLElement : html && (typeof html === 'undefined' ? 'undefined' : _typeof(html)) === "object" && html !== null && html.nodeType === 1 && typeof html.nodeName === "string") {
-		toast.appendChild(html);
-	} else {
-		// Insert as text;
-		toast.innerHTML = html;
-	}
-
-	// Bind hammer
-	var hammerHandler = new _hammerjs2.default(toast, { prevent_default: false });
-	hammerHandler.on('pan', function (e) {
-		var deltaX = e.deltaX;
-		var activationDistance = 80;
-
-		// Change toast state
-		if (!toast.classList.contains('panning')) {
-			toast.classList.add('panning');
-		}
-
-		var opacityPercent = 1 - Math.abs(deltaX / activationDistance);
-		if (opacityPercent < 0) opacityPercent = 0;
-
-		_animations2.default.animatePanning(toast, deltaX, opacityPercent);
-	});
-
-	hammerHandler.on('panend', function (e) {
-		var deltaX = e.deltaX;
-		var activationDistance = 80;
-
-		// If toast dragged past activation point
-		if (Math.abs(deltaX) > activationDistance) {
-
-			_animations2.default.animatePanEnd(toast, function () {
-				if (typeof options.onComplete === "function") {
-					options.onComplete();
-				}
-
-				if (toast.parentNode) {
-					toast.parentNode.removeChild(toast);
-				}
-			});
-		} else {
-			toast.classList.remove('panning');
-			// Put toast back into original position
-			_animations2.default.animateReset(toast);
-		}
-	});
-
-	// create and append actions
-	if (Array.isArray(options.action)) {
-		options.action.forEach(function (action) {
-			var el = createAction(action, (0, _object.toastObject)(toast));
-			if (el) toast.appendChild(el);
-		});
-	} else if (_typeof(options.action) === 'object') {
-		var action = createAction(options.action, (0, _object.toastObject)(toast));
-		if (action) toast.appendChild(action);
-	}
-
-	return toast;
-};
-
-/**
- * Create Action for the toast
- *
- * @param action
- * @param toastObject
- * @returns {Element}
- */
-var createAction = function createAction(action, toastObject) {
-
-	if (!action) {
-		return null;
-	}
-
-	var el = document.createElement('a');
-	el.classList.add('action');
-	el.classList.add('ripple');
-
-	if (action.text) {
-		el.text = action.text;
-	}
-
-	if (action.href) {
-		el.href = action.href;
-	}
-
-	if (action.icon) {
-
-		// add icon class to style it
-		el.classList.add('icon');
-
-		// create icon element
-		var iel = document.createElement('i');
-		iel.classList.add('material-icons');
-		iel.textContent = action.icon;
-
-		// append it to the button
-		el.appendChild(iel);
-	}
-
-	if (action.class) {
-
-		switch (_typeof(action.class)) {
-			case 'string':
-				action.class.split(' ').forEach(function (className) {
-					el.classList.add(className);
-				});
-				break;
-			case 'array':
-				action.class.forEach(function (className) {
-					el.classList.add(className);
-				});
-		}
-	}
-
-	if (action.onClick && typeof action.onClick === 'function') {
-		el.addEventListener('click', function (e) {
-
-			if (action.onClick) {
-				e.preventDefault();
-				action.onClick(e, toastObject);
-			}
-		});
-	}
-
-	// HOOK : action
-	if (_toast.Extender.verifyHook(_toast.Extender.hook.action)) {
-		_toast.Extender.hook.action(el, action, toastObject, _options);
-	}
-
-	return el;
-};
-
-/**
- * this method will create the toast
- *
- * @param instance
- * @param message
- * @param options
- * @returns {{el: *, text: text, goAway: goAway}}
- */
-;
-
-/***/ }),
+/* 5 */,
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3577,65 +3227,7 @@ n.speed=1;n.running=q;n.remove=function(a){a=M(a);for(var b=q.length;b--;)for(va
 b.duration=0;b.add=function(a){b.children.forEach(function(a){a.began=!0;a.completed=!0});w(a).forEach(function(a){var c=b.duration,d=a.offset;a.autoplay=!1;a.offset=g.und(d)?c:K(d,c);b.seek(a.offset);a=n(a);a.duration>c&&(b.duration=a.duration);a.began=!0;b.children.push(a)});b.reset();b.seek(0);b.autoplay&&b.restart();return b};return b};n.random=function(a,b){return Math.floor(Math.random()*(b-a+1))+a};return n});
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.toastObject = exports.changeText = exports.goAway = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _animations = __webpack_require__(2);
-
-var _animations2 = _interopRequireDefault(_animations);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// fade the toast away
-var _goAway = function _goAway(el, delay) {
-    // Animate toast out
-    setTimeout(function () {
-        _animations2.default.animateOut(el, function () {
-            if (el.parentNode) el.parentNode.removeChild(el);
-        });
-    }, delay);
-
-    return true;
-};
-
-// change the text of toast
-exports.goAway = _goAway;
-var changeText = exports.changeText = function changeText(el, text) {
-    if ((typeof HTMLElement === "undefined" ? "undefined" : _typeof(HTMLElement)) === "object" ? text instanceof HTMLElement : text && (typeof text === "undefined" ? "undefined" : _typeof(text)) === "object" && text !== null && text.nodeType === 1 && typeof text.nodeName === "string") {
-        el.appendChild(text);
-    } else {
-        el.innerHTML = text;
-    }
-
-    return undefined;
-};
-
-var toastObject = exports.toastObject = function toastObject(el) {
-    return {
-        el: el,
-        text: function text(_text) {
-            changeText(el, _text);
-            return this;
-        },
-        goAway: function goAway() {
-            var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 800;
-
-            return _goAway(el, delay);
-        }
-    };
-};
-
-/***/ }),
+/* 8 */,
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3936,6 +3528,402 @@ module.exports = {
   polyfill: polyfill
 };
 
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.Toast = undefined;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _hammerjs = __webpack_require__(6);
+
+var _hammerjs2 = _interopRequireDefault(_hammerjs);
+
+var _toasted = __webpack_require__(1);
+
+var _animations = __webpack_require__(2);
+
+var _animations2 = _interopRequireDefault(_animations);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Toast = exports.Toast = function Toast(instance) {
+	var _this = this;
+
+	this.options = {};
+	this.toast = null;
+
+	this.create = function (message, options) {
+
+		if (!message) {
+			return;
+		}
+
+		options = _this.setOptions(options);
+		var container = _this.getContainer();
+
+		_this.toast = document.createElement('div');
+		_this.toast.classList.add('toasted');
+
+		// add classes
+		if (options.className) {
+			options.className.forEach(function (className) {
+				_this.toast.classList.add(className);
+			});
+		}
+
+		// add material icon if available
+		if (options.icon) {
+
+			var iel = document.createElement('i');
+			iel.classList.add('material-icons');
+
+			if (options.icon.after && options.icon.name) {
+				iel.textContent = options.icon.name;
+				iel.classList.add('after');
+				message += iel.outerHTML;
+			} else if (options.icon.name) {
+				iel.textContent = options.icon.name;
+				message = iel.outerHTML + message;
+			} else {
+				iel.textContent = options.icon;
+				message = iel.outerHTML + message;
+			}
+		}
+
+		// Append the Message
+		_this.appendMessage(message);
+
+		// add the touch events of the toast
+		_this.addTouchEvents();
+
+		// create and append actions
+		if (Array.isArray(options.action)) {
+			options.action.forEach(function (action) {
+				var el = _this.createAction(action);
+				if (el) _this.toast.appendChild(el);
+			});
+		} else if (_typeof(options.action) === 'object') {
+			var action = _this.createAction(options.action);
+			if (action) _this.toast.appendChild(action);
+		}
+
+		// append the toasts
+		container.appendChild(_this.toast);
+
+		// animate toast
+		_animations2.default.animateIn(_this.toast);
+
+		// set its duration
+		_this.setDuration();
+
+		return _this;
+	};
+
+	this.appendMessage = function (message) {
+
+		if (!message) {
+			return;
+		}
+
+		// If type of parameter is HTML Element
+		if ((typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? message instanceof HTMLElement : message && (typeof message === 'undefined' ? 'undefined' : _typeof(message)) === "object" && message !== null && message.nodeType === 1 && typeof message.nodeName === "string") {
+			_this.toast.appendChild(message);
+		} else {
+			// Insert as text;
+			_this.toast.innerHTML = message;
+		}
+	};
+
+	this.getContainer = function () {
+
+		var container = document.getElementById(instance.id);
+
+		if (container === null) {
+			container = document.createElement('div');
+			container.id = instance.id;
+			document.body.appendChild(container);
+		}
+
+		// check if the container classes has changed if so update it
+		if (container.className !== _this.options.containerClass.join(' ')) {
+			container.className = "";
+			_this.options.containerClass.forEach(function (className) {
+				container.classList.add(className);
+			});
+		}
+
+		return container;
+	};
+
+	this.setOptions = function (options) {
+
+		// class name to be added on the toast
+		options.className = options.className || null;
+
+		// complete call back of the toast
+		options.onComplete = options.onComplete || null;
+
+		// toast position
+		options.position = options.position || "top-right";
+
+		// toast duration
+		options.duration = options.duration || null;
+
+		// normal type will allow the basic color
+		options.theme = options.theme || "primary";
+
+		// normal type will allow the basic color
+		options.type = options.type || "default";
+
+		// class name to be added on the toast container
+		options.containerClass = options.containerClass || null;
+
+		// check if the fullWidth is enabled
+		options.fullWidth = options.fullWidth || false;
+
+		// get icon name
+		options.icon = options.icon || null;
+
+		// get action name
+		options.action = options.action || null;
+
+		// check if the toast needs to be fitted in the screen (no margin gap between screen)
+		options.fitToScreen = options.fitToScreen || null;
+
+		/* transform options */
+
+		// toast class
+		if (options.className && typeof options.className === "string") {
+			options.className = options.className.split(' ');
+		}
+
+		if (!options.className) {
+			options.className = [];
+		}
+
+		options.theme && options.className.push(options.theme.trim());
+		options.type && options.className.push(options.type);
+
+		// toast container class
+		if (options.containerClass && typeof options.containerClass === "string") {
+			options.containerClass = options.containerClass.split(' ');
+		}
+
+		if (!options.containerClass) {
+			options.containerClass = [];
+		}
+
+		options.position && options.containerClass.push(options.position.trim());
+		options.fullWidth && options.containerClass.push('full-width');
+		options.fitToScreen && options.containerClass.push('fit-to-screen');
+
+		// add toasted container class
+		options.containerClass.unshift('toasted-container');
+
+		// HOOK : options
+		if (_toasted.Extender.verifyHook(_toasted.Extender.hook.options)) {
+			options = _toasted.Extender.hook.options(options, _this.options);
+		}
+
+		_this.options = options;
+		return options;
+	};
+
+	this.addTouchEvents = function () {
+
+		var toast = _this.toast;
+
+		// Bind hammer
+		var hammerHandler = new _hammerjs2.default(toast, { prevent_default: false });
+		hammerHandler.on('pan', function (e) {
+			var deltaX = e.deltaX;
+			var activationDistance = 80;
+
+			// Change toast state
+			if (!toast.classList.contains('panning')) {
+				toast.classList.add('panning');
+			}
+
+			var opacityPercent = 1 - Math.abs(deltaX / activationDistance);
+			if (opacityPercent < 0) opacityPercent = 0;
+
+			_animations2.default.animatePanning(toast, deltaX, opacityPercent);
+		});
+
+		hammerHandler.on('panend', function (e) {
+			var deltaX = e.deltaX;
+			var activationDistance = 80;
+
+			// If toast dragged past activation point
+			if (Math.abs(deltaX) > activationDistance) {
+
+				_animations2.default.animatePanEnd(toast, function () {
+					if (typeof options.onComplete === "function") {
+						options.onComplete();
+					}
+
+					if (toast.parentNode) {
+						toast.parentNode.removeChild(toast);
+					}
+				});
+			} else {
+				toast.classList.remove('panning');
+				// Put toast back into original position
+				_animations2.default.animateReset(toast);
+			}
+		});
+	};
+
+	this.createAction = function (action) {
+
+		if (!action) {
+			return null;
+		}
+
+		var el = document.createElement('a');
+		el.classList.add('action');
+		el.classList.add('ripple');
+
+		if (action.text) {
+			el.text = action.text;
+		}
+
+		if (action.href) {
+			el.href = action.href;
+		}
+
+		if (action.icon) {
+
+			// add icon class to style it
+			el.classList.add('icon');
+
+			// create icon element
+			var iel = document.createElement('i');
+			iel.classList.add('material-icons');
+			iel.textContent = action.icon;
+
+			// append it to the button
+			el.appendChild(iel);
+		}
+
+		if (action.class) {
+
+			switch (_typeof(action.class)) {
+				case 'string':
+					action.class.split(' ').forEach(function (className) {
+						el.classList.add(className);
+					});
+					break;
+				case 'array':
+					action.class.forEach(function (className) {
+						el.classList.add(className);
+					});
+			}
+		}
+
+		if (action.onClick && typeof action.onClick === 'function') {
+			el.addEventListener('click', function (e) {
+
+				if (action.onClick) {
+					e.preventDefault();
+					action.onClick(e, toastObject);
+				}
+			});
+		}
+
+		// HOOK : action
+		if (_toasted.Extender.verifyHook(_toasted.Extender.hook.action)) {
+			_toasted.Extender.hook.action(el, action, _this, instance);
+		}
+
+		return el;
+	};
+
+	this.setDuration = function () {
+
+		// Allows timer to be pause while being panned
+		var timeLeft = _this.options.duration;
+		var counterInterval = void 0;
+		if (timeLeft !== null) {
+			counterInterval = setInterval(function () {
+				if (_this.toast.parentNode === null) window.clearInterval(counterInterval);
+
+				// If toast is not being dragged, decrease its time remaining
+				if (!_this.toast.classList.contains('panning')) {
+					timeLeft -= 20;
+				}
+
+				if (timeLeft <= 0) {
+					// Animate toast out
+
+					_animations2.default.animateOut(_this.toast, function () {
+						// Call the optional callback
+						if (typeof options.onComplete === "function") options.onComplete();
+						// Remove toast after it times out
+						if (_this.toast.parentNode) {
+							_this.toast.parentNode.removeChild(_this.toast);
+						}
+					});
+
+					window.clearInterval(counterInterval);
+				}
+			}, 20);
+		}
+	};
+
+	this.text = function (message) {
+		_this.appendMessage(message);
+		return _this;
+	};
+
+	this.delete = function () {
+		var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
+
+
+		setTimeout(function () {
+			_animations2.default.animateOut(_this.toast, function () {
+				if (_this.toast.parentNode) _this.toast.parentNode.removeChild(_this.toast);
+			});
+		}, delay);
+
+		return true;
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @param delay
+  */
+	this.goAway = function (delay) {
+		return _this.delete(delay);
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @param message
+  */
+	this.changeText = function (message) {
+		return _this.text(message);
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @type {*}
+  */
+	this.el = this.toast;
+
+	return this;
+};
+
+exports.default = Toast;
 
 /***/ })
 /******/ ]);
