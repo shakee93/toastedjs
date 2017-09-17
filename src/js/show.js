@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 import animations from './animations'
 import {toastObject} from './object'
-import {Extender} from './toast';
+import {Extender} from './toasted';
 
 
 let _options = {};

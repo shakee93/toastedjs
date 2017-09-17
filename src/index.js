@@ -1,4 +1,4 @@
-import {Toasted, Extender} from './js/toast';
+import {Toasted, Extender} from './js/toasted';
 
 Toasted.extend = Extender;
 
