@@ -1,0 +1,97 @@
+@import '~node-reset-scss/scss/reset';
+@import '~flexboxgrid';
+
+$blue : #007fff;
+$font : #262c3a;
+body {
+  font-family: 'Lato', sans-serif;
+  overflow-x: hidden;
+  color: $font;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+
+  #app {
+    background-image: url(/src/assets/bg.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    padding: 3em 0 5em;
+  }
+
+  .box-row {
+    padding: 1rem
+  }
+
+  .row .box-row {
+    background: $blue;
+  }
+
+  .full-height {
+    height: 100vh;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  b, strong {
+    font-weight: inherit;
+    font-weight: bolder;
+  }
+
+  h1 {
+    font-family: Lato,sans-serif;
+    font-size: 60px;
+    font-weight:300;
+  }
+
+  .input {
+    margin-bottom: 1.5em;
+
+    input {
+      outline: none;
+      color: $font;
+      padding: 0.7em 1em;
+      border: 2px solid $blue;
+      border-radius: 4px;
+      font-size: 1em;
+      width: 65%;
+      min-width: 200px;
+      letter-spacing: 0.03em;
+      transition : box-shadow .3s, border-color .3s;
+
+      &:focus {
+        border-color: #0468cc;
+        box-shadow: 0 5px 14px 0 rgba(10, 21, 84, 0.24);
+      }
+    }
+
+    label {
+      width: 100%;
+      display: block;
+      margin-bottom: 0.8em;
+      font-weight: 700;
+      letter-spacing: .04em;
+      margin-left: 0.5em;
+    }
+  }
+
+  .t-wrapper {
+
+    header {
+      padding: 1em;
+      margin: 0 0 2em;
+      color: $blue;
+    }
+
+    .t-container {
+      min-height: 400px;
+      background: white;
+      box-shadow: 0 12px 44px 0 rgba(10,21,84,.24);
+      padding: 2em;
+    }
+
+  }
+}
+
+
