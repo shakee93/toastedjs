@@ -22,14 +22,23 @@
                                 </div>
 
                                 <div class="input">
-                                    <label for="position" >Message</label>
-                                    <input id="position" type="text">
+                                    <label for="duration" >Duration</label>
+                                    <input id="duration" type="text">
+                                </div>
+
+                                <div class="input">
+                                    <label >Position</label>
+                                    <div class="input-position">
+                                        <label  v-for="p in positions" :class="{ 'active' : p.position == position }" class="circle">
+                                            <input class="hidden" type="radio" :value="p.position" name="position" v-model="position">
+                                        </label>
+                                    </div>
                                 </div>
 
                             </div>
                             <div class="col-md-6 col-xs-6">
 
-                                <p class="center">Made with Love Shakeeb</p>
+
 
                             </div>
                         </div>
@@ -37,6 +46,13 @@
 
                 </div>
             </main>
+            <footer>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p class="center">Made with Love by Shakeeb</p>
+                    </div>
+                </div>
+            </footer>
         </div>
 
     </div>
@@ -47,6 +63,28 @@
 		name: 'app',
 		data () {
 			return {
+				position : 'top-left',
+				positions : [
+					{
+						position : 'top-left',
+                    },
+                    {
+						position : 'top-center'
+                    },
+                    {
+						position : 'top-right'
+                    },
+                    {
+						position : 'bottom-left'
+                    },
+                    {
+						position : 'bottom-center'
+                    },
+                    {
+						position : 'bottom-right'
+                    },
+
+                ],
 				msg: 'Welcome to Your Vue.js App'
 			}
 		}

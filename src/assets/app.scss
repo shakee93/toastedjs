@@ -61,8 +61,15 @@ body {
       transition : box-shadow .3s, border-color .3s;
 
       &:focus {
-        border-color: #0468cc;
+        border-color: darken($blue, 5%);
         box-shadow: 0 5px 14px 0 rgba(10, 21, 84, 0.24);
+      }
+
+      &.hidden {
+        visibility: hidden;
+        position: absolute;
+        top: -10000px;
+        left: -100000px;
       }
     }
 
@@ -73,6 +80,32 @@ body {
       font-weight: 700;
       letter-spacing: .04em;
       margin-left: 0.5em;
+    }
+
+
+    .input-position {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 1.5em;
+      margin-left: 1.1em;
+
+      .circle {
+        width: 25px;
+        height: 25px;
+        background: $blue;
+        border-radius: 100%;
+        margin: 2px;
+        border: 5px solid transparent;
+        cursor: pointer;
+        transition: border-color .3s, background .3s, box-shadow .3s;
+
+        &.active {
+          border-color: #f3f3f3;
+          background: darken($blue, 10%);
+          box-shadow: 0 5px 14px 0 rgba(10, 21, 84, 0.24);
+        }
+      }
     }
   }
 
@@ -91,6 +124,9 @@ body {
       padding: 2em;
     }
 
+    footer {
+      margin-top: 3em;
+    }
   }
 }
 
