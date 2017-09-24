@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -80,7 +80,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-var randomFromSeed = __webpack_require__(11);
+var randomFromSeed = __webpack_require__(10);
 
 var ORIGINAL = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
 var alphabet;
@@ -192,28 +192,45 @@ exports.initiateCustomToasts = exports._show = exports.Toasted = exports.Extende
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _toast = __webpack_require__(18);
+var _toast = __webpack_require__(4);
 
 var _toast2 = _interopRequireDefault(_toast);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var uuid = __webpack_require__(9);
+var uuid = __webpack_require__(8);
 
 // add Object.assign Polyfill
-__webpack_require__(17).polyfill();
+__webpack_require__(16).polyfill();
 
 /**
  * Allows Toasted to be Extended
  *
- * @type {{hook: {}, verifyHook: Extender.verifyHook}}
  */
-var Extender = exports.Extender = {
-	hook: {},
-	verifyHook: function verifyHook(hook) {
-		return !!(hook && typeof hook === 'function');
-	}
-};
+var Extender = exports.Extender = function () {
+
+	return {
+		hook: {
+			options: [],
+			actions: []
+		},
+		run: function run(name, callback) {
+
+			if (!Array.isArray(this.hook[name])) {
+				console.warn("[toasted] : hook not found");
+				return;
+			}
+
+			this.hook[name].forEach(function (hook) {
+
+				// check if it is a function
+				if (!hook && typeof hook !== 'function') return;
+
+				callback && callback(hook);
+			});
+		}
+	};
+}();
 
 /**
  * Toast
@@ -431,75 +448,7 @@ exports.default = { Toasted: Toasted, Extender: Extender };
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _animejs = __webpack_require__(7);
-
-var _animejs2 = _interopRequireDefault(_animejs);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var duration = 300;
-
-exports.default = {
-    animateIn: function animateIn(el) {
-        (0, _animejs2.default)({
-            targets: el,
-            translateY: '-35px',
-            opacity: 1,
-            duration: duration,
-            easing: 'easeOutCubic'
-        });
-    },
-    animateOut: function animateOut(el, onComplete) {
-        (0, _animejs2.default)({
-            targets: el,
-            opacity: 0,
-            marginTop: '-40px',
-            duration: duration,
-            easing: 'easeOutExpo',
-            complete: onComplete
-        });
-    },
-    animateReset: function animateReset(el) {
-        (0, _animejs2.default)({
-            targets: el,
-            left: 0,
-            opacity: 1,
-            duration: duration,
-            easing: 'easeOutExpo'
-        });
-    },
-    animatePanning: function animatePanning(el, left, opacity) {
-        (0, _animejs2.default)({
-            targets: el,
-            duration: 10,
-            easing: 'easeOutQuad',
-            left: left,
-            opacity: opacity
-        });
-    },
-    animatePanEnd: function animatePanEnd(el, onComplete) {
-        (0, _animejs2.default)({
-            targets: el,
-            opacity: 0,
-            duration: duration,
-            easing: 'easeOutExpo',
-            complete: onComplete
-        });
-    }
-};
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var randomByte = __webpack_require__(12);
+var randomByte = __webpack_require__(11);
 
 function encode(lookup, number) {
     var loopCounter = 0;
@@ -519,6 +468,40 @@ module.exports = encode;
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _toasted = __webpack_require__(1);
+
+_toasted.Toasted.extend = _toasted.Extender.hook;
+
+(function (root, factory) {
+	if (true) {
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+			return root.Toasted = factory();
+		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
+		module.exports = root.Toasted = factory();
+	} else {
+		root.Toasted = factory();
+	}
+})(window, function () {
+	return _toasted.Toasted;
+});
+
+exports.default = _toasted.Toasted;
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -528,21 +511,394 @@ module.exports = encode;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.Toast = undefined;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _hammerjs = __webpack_require__(5);
+
+var _hammerjs2 = _interopRequireDefault(_hammerjs);
 
 var _toasted = __webpack_require__(1);
 
-_toasted.Toasted.extend = _toasted.Extender;
+var _animations = __webpack_require__(6);
 
-// register plugin to window
-if (typeof window !== 'undefined') {
-	window.Toasted = _toasted.Toasted;
-}
+var _animations2 = _interopRequireDefault(_animations);
 
-exports.default = _toasted.Toasted;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Toast = exports.Toast = function Toast(instance) {
+	var _this = this;
+
+	this.options = {};
+	this.toast = null;
+
+	this.create = function (message, options) {
+
+		if (!message) {
+			return;
+		}
+
+		options = _this.setOptions(options);
+		var container = _this.getContainer();
+
+		_this.toast = document.createElement('div');
+		_this.toast.classList.add('toasted');
+
+		// add classes
+		if (options.className) {
+			options.className.forEach(function (className) {
+				_this.toast.classList.add(className);
+			});
+		}
+
+		// add material icon if available
+		if (options.icon) {
+
+			var iel = document.createElement('i');
+			iel.classList.add('material-icons');
+
+			if (options.icon.after && options.icon.name) {
+				iel.textContent = options.icon.name;
+				iel.classList.add('after');
+				message += iel.outerHTML;
+			} else if (options.icon.name) {
+				iel.textContent = options.icon.name;
+				message = iel.outerHTML + message;
+			} else {
+				iel.textContent = options.icon;
+				message = iel.outerHTML + message;
+			}
+		}
+
+		// Append the Message
+		_this.appendMessage(message);
+
+		// add the touch events of the toast
+		_this.addTouchEvents();
+
+		// create and append actions
+		if (Array.isArray(options.action)) {
+			options.action.forEach(function (action) {
+				var el = _this.createAction(action);
+				if (el) _this.toast.appendChild(el);
+			});
+		} else if (_typeof(options.action) === 'object') {
+			var action = _this.createAction(options.action);
+			if (action) _this.toast.appendChild(action);
+		}
+
+		// append the toasts
+		container.appendChild(_this.toast);
+
+		// animate toast
+		_animations2.default.animateIn(_this.toast);
+
+		// set its duration
+		_this.setDuration();
+
+		return _this;
+	};
+
+	this.appendMessage = function (message) {
+
+		if (!message) {
+			return;
+		}
+
+		// If type of parameter is HTML Element
+		if ((typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? message instanceof HTMLElement : message && (typeof message === 'undefined' ? 'undefined' : _typeof(message)) === "object" && message !== null && message.nodeType === 1 && typeof message.nodeName === "string") {
+			_this.toast.appendChild(message);
+		} else {
+			// Insert as text;
+			_this.toast.innerHTML = message;
+		}
+	};
+
+	this.getContainer = function () {
+
+		var container = document.getElementById(instance.id);
+
+		if (container === null) {
+			container = document.createElement('div');
+			container.id = instance.id;
+			document.body.appendChild(container);
+		}
+
+		// check if the container classes has changed if so update it
+		if (container.className !== _this.options.containerClass.join(' ')) {
+			container.className = "";
+			_this.options.containerClass.forEach(function (className) {
+				container.classList.add(className);
+			});
+		}
+
+		return container;
+	};
+
+	this.setOptions = function (options) {
+
+		// class name to be added on the toast
+		options.className = options.className || null;
+
+		// complete call back of the toast
+		options.onComplete = options.onComplete || null;
+
+		// toast position
+		options.position = options.position || "top-right";
+
+		// toast duration
+		options.duration = options.duration || null;
+
+		// normal type will allow the basic color
+		options.theme = options.theme || "primary";
+
+		// normal type will allow the basic color
+		options.type = options.type || "default";
+
+		// class name to be added on the toast container
+		options.containerClass = options.containerClass || null;
+
+		// check if the fullWidth is enabled
+		options.fullWidth = options.fullWidth || false;
+
+		// get icon name
+		options.icon = options.icon || null;
+
+		// get action name
+		options.action = options.action || null;
+
+		// check if the toast needs to be fitted in the screen (no margin gap between screen)
+		options.fitToScreen = options.fitToScreen || null;
+
+		/* transform options */
+
+		// toast class
+		if (options.className && typeof options.className === "string") {
+			options.className = options.className.split(' ');
+		}
+
+		if (!options.className) {
+			options.className = [];
+		}
+
+		options.theme && options.className.push(options.theme.trim());
+		options.type && options.className.push(options.type);
+
+		// toast container class
+		if (options.containerClass && typeof options.containerClass === "string") {
+			options.containerClass = options.containerClass.split(' ');
+		}
+
+		if (!options.containerClass) {
+			options.containerClass = [];
+		}
+
+		options.position && options.containerClass.push(options.position.trim());
+		options.fullWidth && options.containerClass.push('full-width');
+		options.fitToScreen && options.containerClass.push('fit-to-screen');
+
+		// add toasted container class
+		options.containerClass.unshift('toasted-container');
+
+		// HOOK : options
+		_toasted.Extender.run("options", function (hook) {
+			return hook(options, _this.options);
+		});
+
+		_this.options = options;
+		return options;
+	};
+
+	this.addTouchEvents = function () {
+
+		var toast = _this.toast;
+
+		// Bind hammer
+		var hammerHandler = new _hammerjs2.default(toast, { prevent_default: false });
+		hammerHandler.on('pan', function (e) {
+			var deltaX = e.deltaX;
+			var activationDistance = 80;
+
+			// Change toast state
+			if (!toast.classList.contains('panning')) {
+				toast.classList.add('panning');
+			}
+
+			var opacityPercent = 1 - Math.abs(deltaX / activationDistance);
+			if (opacityPercent < 0) opacityPercent = 0;
+
+			_animations2.default.animatePanning(toast, deltaX, opacityPercent);
+		});
+
+		hammerHandler.on('panend', function (e) {
+			var deltaX = e.deltaX;
+			var activationDistance = 80;
+
+			// If toast dragged past activation point
+			if (Math.abs(deltaX) > activationDistance) {
+
+				_animations2.default.animatePanEnd(toast, function () {
+					if (typeof options.onComplete === "function") {
+						options.onComplete();
+					}
+
+					if (toast.parentNode) {
+						toast.parentNode.removeChild(toast);
+					}
+				});
+			} else {
+				toast.classList.remove('panning');
+				// Put toast back into original position
+				_animations2.default.animateReset(toast);
+			}
+		});
+	};
+
+	this.createAction = function (action) {
+
+		if (!action) {
+			return null;
+		}
+
+		var el = document.createElement('a');
+		el.classList.add('action');
+		el.classList.add('ripple');
+
+		if (action.text) {
+			el.text = action.text;
+		}
+
+		if (action.href) {
+			el.href = action.href;
+		}
+
+		if (action.icon) {
+
+			// add icon class to style it
+			el.classList.add('icon');
+
+			// create icon element
+			var iel = document.createElement('i');
+			iel.classList.add('material-icons');
+			iel.textContent = action.icon;
+
+			// append it to the button
+			el.appendChild(iel);
+		}
+
+		if (action.class) {
+
+			switch (_typeof(action.class)) {
+				case 'string':
+					action.class.split(' ').forEach(function (className) {
+						el.classList.add(className);
+					});
+					break;
+				case 'array':
+					action.class.forEach(function (className) {
+						el.classList.add(className);
+					});
+			}
+		}
+
+		if (action.onClick && typeof action.onClick === 'function') {
+			el.addEventListener('click', function (e) {
+
+				if (action.onClick) {
+					e.preventDefault();
+					action.onClick(e, toastObject);
+				}
+			});
+		}
+
+		// HOOK : actions
+		_toasted.Extender.run("actions", function (hook) {
+			return hook(el, action, _this, instance);
+		});
+
+		return el;
+	};
+
+	this.setDuration = function () {
+
+		// Allows timer to be pause while being panned
+		var timeLeft = _this.options.duration;
+		var counterInterval = void 0;
+		if (timeLeft !== null) {
+			counterInterval = setInterval(function () {
+				if (_this.toast.parentNode === null) window.clearInterval(counterInterval);
+
+				// If toast is not being dragged, decrease its time remaining
+				if (!_this.toast.classList.contains('panning')) {
+					timeLeft -= 20;
+				}
+
+				if (timeLeft <= 0) {
+					// Animate toast out
+
+					_animations2.default.animateOut(_this.toast, function () {
+						// Call the optional callback
+						if (typeof options.onComplete === "function") options.onComplete();
+						// Remove toast after it times out
+						if (_this.toast.parentNode) {
+							_this.toast.parentNode.removeChild(_this.toast);
+						}
+					});
+
+					window.clearInterval(counterInterval);
+				}
+			}, 20);
+		}
+	};
+
+	this.text = function (message) {
+		_this.appendMessage(message);
+		return _this;
+	};
+
+	this.delete = function () {
+		var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
+
+
+		setTimeout(function () {
+			_animations2.default.animateOut(_this.toast, function () {
+				if (_this.toast.parentNode) _this.toast.parentNode.removeChild(_this.toast);
+			});
+		}, delay);
+
+		return true;
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @param delay
+  */
+	this.goAway = function (delay) {
+		return _this.delete(delay);
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @param message
+  */
+	this.changeText = function (message) {
+		return _this.text(message);
+	};
+
+	/**
+  * @deprecated since 0.0.11
+  * @type {*}
+  */
+	this.el = this.toast;
+
+	return this;
+};
+
+exports.default = Toast;
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -3192,6 +3548,74 @@ if (true) {
 
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _animejs = __webpack_require__(7);
+
+var _animejs2 = _interopRequireDefault(_animejs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var duration = 300;
+
+exports.default = {
+    animateIn: function animateIn(el) {
+        (0, _animejs2.default)({
+            targets: el,
+            translateY: '-35px',
+            opacity: 1,
+            duration: duration,
+            easing: 'easeOutCubic'
+        });
+    },
+    animateOut: function animateOut(el, onComplete) {
+        (0, _animejs2.default)({
+            targets: el,
+            opacity: 0,
+            marginTop: '-40px',
+            duration: duration,
+            easing: 'easeOutExpo',
+            complete: onComplete
+        });
+    },
+    animateReset: function animateReset(el) {
+        (0, _animejs2.default)({
+            targets: el,
+            left: 0,
+            opacity: 1,
+            duration: duration,
+            easing: 'easeOutExpo'
+        });
+    },
+    animatePanning: function animatePanning(el, left, opacity) {
+        (0, _animejs2.default)({
+            targets: el,
+            duration: 10,
+            easing: 'easeOutQuad',
+            left: left,
+            opacity: opacity
+        });
+    },
+    animatePanEnd: function animatePanEnd(el, onComplete) {
+        (0, _animejs2.default)({
+            targets: el,
+            opacity: 0,
+            duration: duration,
+            easing: 'easeOutExpo',
+            complete: onComplete
+        });
+    }
+};
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3227,33 +3651,32 @@ n.speed=1;n.running=q;n.remove=function(a){a=M(a);for(var b=q.length;b--;)for(va
 b.duration=0;b.add=function(a){b.children.forEach(function(a){a.began=!0;a.completed=!0});w(a).forEach(function(a){var c=b.duration,d=a.offset;a.autoplay=!1;a.offset=g.und(d)?c:K(d,c);b.seek(a.offset);a=n(a);a.duration>c&&(b.duration=a.duration);a.began=!0;b.children.push(a)});b.reset();b.seek(0);b.autoplay&&b.restart();return b};return b};n.random=function(a,b){return Math.floor(Math.random()*(b-a+1))+a};return n});
 
 /***/ }),
-/* 8 */,
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-module.exports = __webpack_require__(10);
+module.exports = __webpack_require__(9);
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var alphabet = __webpack_require__(0);
-var encode = __webpack_require__(3);
-var decode = __webpack_require__(13);
-var build = __webpack_require__(14);
-var isValid = __webpack_require__(15);
+var encode = __webpack_require__(2);
+var decode = __webpack_require__(12);
+var build = __webpack_require__(13);
+var isValid = __webpack_require__(14);
 
 // if you are using cluster or multiple servers use this to make each instance
 // has a unique value for worker
 // Note: I don't know if this is automatically set when using third
 // party cluster solutions such as pm2.
-var clusterWorkerId = __webpack_require__(16) || 0;
+var clusterWorkerId = __webpack_require__(15) || 0;
 
 /**
  * Set the seed.
@@ -3309,7 +3732,7 @@ module.exports.isValid = isValid;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3341,7 +3764,7 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3362,7 +3785,7 @@ module.exports = randomByte;
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3386,13 +3809,13 @@ module.exports = decode;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var encode = __webpack_require__(3);
+var encode = __webpack_require__(2);
 var alphabet = __webpack_require__(0);
 
 // Ignore all milliseconds before a certain time to reduce the size of the date entropy without sacrificing uniqueness.
@@ -3441,7 +3864,7 @@ module.exports = build;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3467,7 +3890,7 @@ module.exports = isShortId;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3477,7 +3900,7 @@ module.exports = 0;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3528,402 +3951,6 @@ module.exports = {
   polyfill: polyfill
 };
 
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.Toast = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _hammerjs = __webpack_require__(6);
-
-var _hammerjs2 = _interopRequireDefault(_hammerjs);
-
-var _toasted = __webpack_require__(1);
-
-var _animations = __webpack_require__(2);
-
-var _animations2 = _interopRequireDefault(_animations);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Toast = exports.Toast = function Toast(instance) {
-	var _this = this;
-
-	this.options = {};
-	this.toast = null;
-
-	this.create = function (message, options) {
-
-		if (!message) {
-			return;
-		}
-
-		options = _this.setOptions(options);
-		var container = _this.getContainer();
-
-		_this.toast = document.createElement('div');
-		_this.toast.classList.add('toasted');
-
-		// add classes
-		if (options.className) {
-			options.className.forEach(function (className) {
-				_this.toast.classList.add(className);
-			});
-		}
-
-		// add material icon if available
-		if (options.icon) {
-
-			var iel = document.createElement('i');
-			iel.classList.add('material-icons');
-
-			if (options.icon.after && options.icon.name) {
-				iel.textContent = options.icon.name;
-				iel.classList.add('after');
-				message += iel.outerHTML;
-			} else if (options.icon.name) {
-				iel.textContent = options.icon.name;
-				message = iel.outerHTML + message;
-			} else {
-				iel.textContent = options.icon;
-				message = iel.outerHTML + message;
-			}
-		}
-
-		// Append the Message
-		_this.appendMessage(message);
-
-		// add the touch events of the toast
-		_this.addTouchEvents();
-
-		// create and append actions
-		if (Array.isArray(options.action)) {
-			options.action.forEach(function (action) {
-				var el = _this.createAction(action);
-				if (el) _this.toast.appendChild(el);
-			});
-		} else if (_typeof(options.action) === 'object') {
-			var action = _this.createAction(options.action);
-			if (action) _this.toast.appendChild(action);
-		}
-
-		// append the toasts
-		container.appendChild(_this.toast);
-
-		// animate toast
-		_animations2.default.animateIn(_this.toast);
-
-		// set its duration
-		_this.setDuration();
-
-		return _this;
-	};
-
-	this.appendMessage = function (message) {
-
-		if (!message) {
-			return;
-		}
-
-		// If type of parameter is HTML Element
-		if ((typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? message instanceof HTMLElement : message && (typeof message === 'undefined' ? 'undefined' : _typeof(message)) === "object" && message !== null && message.nodeType === 1 && typeof message.nodeName === "string") {
-			_this.toast.appendChild(message);
-		} else {
-			// Insert as text;
-			_this.toast.innerHTML = message;
-		}
-	};
-
-	this.getContainer = function () {
-
-		var container = document.getElementById(instance.id);
-
-		if (container === null) {
-			container = document.createElement('div');
-			container.id = instance.id;
-			document.body.appendChild(container);
-		}
-
-		// check if the container classes has changed if so update it
-		if (container.className !== _this.options.containerClass.join(' ')) {
-			container.className = "";
-			_this.options.containerClass.forEach(function (className) {
-				container.classList.add(className);
-			});
-		}
-
-		return container;
-	};
-
-	this.setOptions = function (options) {
-
-		// class name to be added on the toast
-		options.className = options.className || null;
-
-		// complete call back of the toast
-		options.onComplete = options.onComplete || null;
-
-		// toast position
-		options.position = options.position || "top-right";
-
-		// toast duration
-		options.duration = options.duration || null;
-
-		// normal type will allow the basic color
-		options.theme = options.theme || "primary";
-
-		// normal type will allow the basic color
-		options.type = options.type || "default";
-
-		// class name to be added on the toast container
-		options.containerClass = options.containerClass || null;
-
-		// check if the fullWidth is enabled
-		options.fullWidth = options.fullWidth || false;
-
-		// get icon name
-		options.icon = options.icon || null;
-
-		// get action name
-		options.action = options.action || null;
-
-		// check if the toast needs to be fitted in the screen (no margin gap between screen)
-		options.fitToScreen = options.fitToScreen || null;
-
-		/* transform options */
-
-		// toast class
-		if (options.className && typeof options.className === "string") {
-			options.className = options.className.split(' ');
-		}
-
-		if (!options.className) {
-			options.className = [];
-		}
-
-		options.theme && options.className.push(options.theme.trim());
-		options.type && options.className.push(options.type);
-
-		// toast container class
-		if (options.containerClass && typeof options.containerClass === "string") {
-			options.containerClass = options.containerClass.split(' ');
-		}
-
-		if (!options.containerClass) {
-			options.containerClass = [];
-		}
-
-		options.position && options.containerClass.push(options.position.trim());
-		options.fullWidth && options.containerClass.push('full-width');
-		options.fitToScreen && options.containerClass.push('fit-to-screen');
-
-		// add toasted container class
-		options.containerClass.unshift('toasted-container');
-
-		// HOOK : options
-		if (_toasted.Extender.verifyHook(_toasted.Extender.hook.options)) {
-			options = _toasted.Extender.hook.options(options, _this.options);
-		}
-
-		_this.options = options;
-		return options;
-	};
-
-	this.addTouchEvents = function () {
-
-		var toast = _this.toast;
-
-		// Bind hammer
-		var hammerHandler = new _hammerjs2.default(toast, { prevent_default: false });
-		hammerHandler.on('pan', function (e) {
-			var deltaX = e.deltaX;
-			var activationDistance = 80;
-
-			// Change toast state
-			if (!toast.classList.contains('panning')) {
-				toast.classList.add('panning');
-			}
-
-			var opacityPercent = 1 - Math.abs(deltaX / activationDistance);
-			if (opacityPercent < 0) opacityPercent = 0;
-
-			_animations2.default.animatePanning(toast, deltaX, opacityPercent);
-		});
-
-		hammerHandler.on('panend', function (e) {
-			var deltaX = e.deltaX;
-			var activationDistance = 80;
-
-			// If toast dragged past activation point
-			if (Math.abs(deltaX) > activationDistance) {
-
-				_animations2.default.animatePanEnd(toast, function () {
-					if (typeof options.onComplete === "function") {
-						options.onComplete();
-					}
-
-					if (toast.parentNode) {
-						toast.parentNode.removeChild(toast);
-					}
-				});
-			} else {
-				toast.classList.remove('panning');
-				// Put toast back into original position
-				_animations2.default.animateReset(toast);
-			}
-		});
-	};
-
-	this.createAction = function (action) {
-
-		if (!action) {
-			return null;
-		}
-
-		var el = document.createElement('a');
-		el.classList.add('action');
-		el.classList.add('ripple');
-
-		if (action.text) {
-			el.text = action.text;
-		}
-
-		if (action.href) {
-			el.href = action.href;
-		}
-
-		if (action.icon) {
-
-			// add icon class to style it
-			el.classList.add('icon');
-
-			// create icon element
-			var iel = document.createElement('i');
-			iel.classList.add('material-icons');
-			iel.textContent = action.icon;
-
-			// append it to the button
-			el.appendChild(iel);
-		}
-
-		if (action.class) {
-
-			switch (_typeof(action.class)) {
-				case 'string':
-					action.class.split(' ').forEach(function (className) {
-						el.classList.add(className);
-					});
-					break;
-				case 'array':
-					action.class.forEach(function (className) {
-						el.classList.add(className);
-					});
-			}
-		}
-
-		if (action.onClick && typeof action.onClick === 'function') {
-			el.addEventListener('click', function (e) {
-
-				if (action.onClick) {
-					e.preventDefault();
-					action.onClick(e, toastObject);
-				}
-			});
-		}
-
-		// HOOK : action
-		if (_toasted.Extender.verifyHook(_toasted.Extender.hook.action)) {
-			_toasted.Extender.hook.action(el, action, _this, instance);
-		}
-
-		return el;
-	};
-
-	this.setDuration = function () {
-
-		// Allows timer to be pause while being panned
-		var timeLeft = _this.options.duration;
-		var counterInterval = void 0;
-		if (timeLeft !== null) {
-			counterInterval = setInterval(function () {
-				if (_this.toast.parentNode === null) window.clearInterval(counterInterval);
-
-				// If toast is not being dragged, decrease its time remaining
-				if (!_this.toast.classList.contains('panning')) {
-					timeLeft -= 20;
-				}
-
-				if (timeLeft <= 0) {
-					// Animate toast out
-
-					_animations2.default.animateOut(_this.toast, function () {
-						// Call the optional callback
-						if (typeof options.onComplete === "function") options.onComplete();
-						// Remove toast after it times out
-						if (_this.toast.parentNode) {
-							_this.toast.parentNode.removeChild(_this.toast);
-						}
-					});
-
-					window.clearInterval(counterInterval);
-				}
-			}, 20);
-		}
-	};
-
-	this.text = function (message) {
-		_this.appendMessage(message);
-		return _this;
-	};
-
-	this.delete = function () {
-		var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
-
-
-		setTimeout(function () {
-			_animations2.default.animateOut(_this.toast, function () {
-				if (_this.toast.parentNode) _this.toast.parentNode.removeChild(_this.toast);
-			});
-		}, delay);
-
-		return true;
-	};
-
-	/**
-  * @deprecated since 0.0.11
-  * @param delay
-  */
-	this.goAway = function (delay) {
-		return _this.delete(delay);
-	};
-
-	/**
-  * @deprecated since 0.0.11
-  * @param message
-  */
-	this.changeText = function (message) {
-		return _this.text(message);
-	};
-
-	/**
-  * @deprecated since 0.0.11
-  * @type {*}
-  */
-	this.el = this.toast;
-
-	return this;
-};
-
-exports.default = Toast;
 
 /***/ })
 /******/ ]);

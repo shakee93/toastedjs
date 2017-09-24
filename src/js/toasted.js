@@ -7,14 +7,31 @@ require('es6-object-assign').polyfill();
 /**
  * Allows Toasted to be Extended
  *
- * @type {{hook: {}, verifyHook: Extender.verifyHook}}
  */
-export let Extender = {
-	hook: {},
-	verifyHook: function (hook) {
-		return !!(hook && typeof hook === 'function');
+export const Extender = function () {
+
+	return {
+		hook: {
+			options : [],
+			actions : []
+		},
+		run : function(name, callback) {
+
+			if(!Array.isArray(this.hook[name])) {
+				console.warn("[toasted] : hook not found");
+				return;
+			}
+
+			this.hook[name].forEach((hook) => {
+
+				// check if it is a function
+				if(!hook && typeof hook !== 'function') return;
+
+				callback && callback(hook);
+			})
+		}
 	}
-};
+}();
 
 
 /**

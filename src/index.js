@@ -1,10 +1,19 @@
 import {Toasted, Extender} from './js/toasted';
 
-Toasted.extend = Extender;
+Toasted.extend = Extender.hook;
 
-// register plugin to window
-if (typeof window !== 'undefined') {
-	window.Toasted = Toasted;
-}
+(function (root, factory) {
+	if(typeof define === "function" && define.amd) {
+		define([], function(){
+			return (root.Toasted = factory());
+		});
+	} else if(typeof module === "object" && module.exports) {
+		module.exports = (root.Toasted = factory());
+	} else {
+		root.Toasted = factory();
+	}
+}(window, function() {
+	return Toasted;
+}));
 
 export default Toasted

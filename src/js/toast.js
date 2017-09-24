@@ -184,9 +184,7 @@ export const Toast = function (instance) {
 		options.containerClass.unshift('toasted-container');
 
 		// HOOK : options
-		if (Extender.verifyHook(Extender.hook.options)) {
-			options = Extender.hook.options(options, this.options);
-		}
+		Extender.run("options", hook => hook(options, this.options))
 
 		this.options = options;
 	    return options;
@@ -300,10 +298,8 @@ export const Toast = function (instance) {
 			})
 		}
 
-		// HOOK : action
-		if (Extender.verifyHook(Extender.hook.action)) {
-			Extender.hook.action(el, action, this, instance);
-		}
+		// HOOK : actions
+		Extender.run("actions", hook => hook(el, action, this, instance))
 
 		return el;
 
