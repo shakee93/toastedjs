@@ -1,6 +1,7 @@
 import {Toasted, Extender} from './js/toasted';
 
 Toasted.extend = Extender.hook;
+Toasted.utils = Extender.utils;
 
 (function (root, factory) {
 	if(typeof define === "function" && define.amd) {

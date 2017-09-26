@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -188,17 +188,22 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.initiateCustomToasts = exports._show = exports.Toasted = exports.Extender = undefined;
+exports.Toasted = exports.Extender = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _toast = __webpack_require__(4);
+var _toast = __webpack_require__(5);
 
 var _toast2 = _interopRequireDefault(_toast);
+
+var _animations = __webpack_require__(2);
+
+var _animations2 = _interopRequireDefault(_animations);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var uuid = __webpack_require__(8);
+
 
 // add Object.assign Polyfill
 __webpack_require__(16).polyfill();
@@ -228,6 +233,11 @@ var Extender = exports.Extender = function () {
 
 				callback && callback(hook);
 			});
+		},
+		utils: {
+			warn: function warn(message) {
+				console.warn('[toasted] : ' + message);
+			}
 		}
 	};
 }();
@@ -266,9 +276,9 @@ var Toasted = exports.Toasted = function Toasted(_options) {
 	this.groups = [];
 
 	/**
-  * Initiate custom toasts
+  * All Registered Toasts
   */
-	initiateCustomToasts(this);
+	this.toasts = [];
 
 	/**
   * Create New Group of Toasts
@@ -294,15 +304,89 @@ var Toasted = exports.Toasted = function Toasted(_options) {
 	};
 
 	/**
+  * Base Toast Show Function
+  *
+  * @param message
+  * @param options
+  * @returns {*}
+  * @private
+  */
+	var _show = function _show(message, options) {
+
+		if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== "object") {
+			Extender.utils.warn('Options should be a type of object. given : ' + options);
+			return null;
+		}
+
+		// clone the global options
+		var _options = Object.assign({}, _this.options);
+
+		// merge the cached global options with options
+		Object.assign(_options, options);
+
+		var toast = new _toast2.default(_this);
+		return toast.create(message, _options);
+	};
+
+	/**
+  *
+  */
+	var initiateCustomToasts = function initiateCustomToasts() {
+
+		var customToasts = _this.options.globalToasts;
+
+		// this will initiate toast for the custom toast.
+		var initiate = function initiate(message, options) {
+
+			// check if passed option is a available method if so call it.
+			if (typeof options === 'string' && _this[options]) {
+				return _this[options].apply(_this, [message, {}]);
+			}
+
+			// or else create a new toast with passed options.
+			return _show(message, options);
+		};
+
+		if (customToasts) {
+
+			_this.global = {};
+
+			Object.keys(customToasts).forEach(function (key) {
+
+				// register the custom toast events to the Toast.custom property
+				_this.global[key] = function () {
+					var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+
+					// return the it in order to expose the Toast methods
+					return customToasts[key].apply(null, [payload, initiate]);
+				};
+			});
+		}
+	};
+
+	/**
   * Register a Global Toast
   *
   * @param name
-  * @param payload
+  * @param message
   * @param options
   */
-	this.register = function (name, payload, options) {
+	this.register = function (name, message, options) {
 		options = options || {};
-		return register(_this, name, payload, options);
+
+		!_this.options.globalToasts ? _this.options.globalToasts = {} : null;
+
+		_this.options.globalToasts[name] = function (payload, initiate) {
+
+			if (typeof message === 'function') {
+				message = message(payload);
+			}
+
+			return initiate(message, options);
+		};
+
+		initiateCustomToasts();
 	};
 
 	/**
@@ -313,7 +397,7 @@ var Toasted = exports.Toasted = function Toasted(_options) {
   * @returns {*}
   */
 	this.show = function (message, options) {
-		return _show(_this, message, options);
+		return _show(message, options);
 	};
 
 	/**
@@ -326,7 +410,7 @@ var Toasted = exports.Toasted = function Toasted(_options) {
 	this.success = function (message, options) {
 		options = options || {};
 		options.type = "success";
-		return _show(_this, message, options);
+		return _show(message, options);
 	};
 
 	/**
@@ -339,7 +423,7 @@ var Toasted = exports.Toasted = function Toasted(_options) {
 	this.info = function (message, options) {
 		options = options || {};
 		options.type = "info";
-		return _show(_this, message, options);
+		return _show(message, options);
 	};
 
 	/**
@@ -352,97 +436,117 @@ var Toasted = exports.Toasted = function Toasted(_options) {
 	this.error = function (message, options) {
 		options = options || {};
 		options.type = "error";
-		return _show(_this, message, options);
+		return _show(message, options);
 	};
+
+	/**
+  * Clear All Toasts
+  *
+  * @returns {boolean}
+  */
+	this.clear = function () {
+		_animations2.default.clearAnimation(_this.toasts);
+		_this.toasts = [];
+	};
+
+	/**
+  * Initiate custom toasts
+  */
+	initiateCustomToasts();
 
 	return this;
-};
-
-/**
- * Wrapper for show method in order to manipulate options
- *
- * @param instance
- * @param message
- * @param options
- * @returns {*}
- * @private
- */
-var _show = exports._show = function _show(instance, message, options) {
-	options = options || {};
-
-	if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== "object") {
-		console.error("Options should be a type of object. given : " + options);
-		return null;
-	}
-
-	// clone the global options
-	var _options = Object.assign({}, instance.options);
-
-	// merge the cached global options with options
-	Object.assign(_options, options);
-
-	var toast = new _toast2.default(instance);
-
-	return toast.create(message, _options);
-};
-
-/**
- * Register the Custom Toasts
- */
-var initiateCustomToasts = exports.initiateCustomToasts = function initiateCustomToasts(instance) {
-
-	var customToasts = instance.options.globalToasts;
-
-	// this will initiate toast for the custom toast.
-	var initiate = function initiate(message, options) {
-
-		// check if passed option is a available method if so call it.
-		if (typeof options === 'string' && instance[options]) {
-			return instance[options].apply(instance, [message, {}]);
-		}
-
-		// or else create a new toast with passed options.
-		return _show(instance.id, message, options);
-	};
-
-	if (customToasts) {
-
-		instance.global = {};
-
-		Object.keys(customToasts).forEach(function (key) {
-
-			// register the custom toast events to the Toast.custom property
-			instance.global[key] = function () {
-				var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-
-				// return the it in order to expose the Toast methods
-				return customToasts[key].apply(null, [payload, initiate]);
-			};
-		});
-	}
-};
-
-var register = function register(instance, name, message, options) {
-
-	!instance.options.globalToasts ? instance.options.globalToasts = {} : null;
-
-	instance.options.globalToasts[name] = function (payload, initiate) {
-
-		if (typeof message === 'function') {
-			message = message(payload);
-		}
-
-		return initiate(message, options);
-	};
-
-	initiateCustomToasts(instance);
 };
 
 exports.default = { Toasted: Toasted, Extender: Extender };
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _animejs = __webpack_require__(7);
+
+var _animejs2 = _interopRequireDefault(_animejs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var duration = 300;
+
+exports.default = {
+    animateIn: function animateIn(el) {
+        (0, _animejs2.default)({
+            targets: el,
+            translateY: '-35px',
+            opacity: 1,
+            duration: duration,
+            easing: 'easeOutCubic'
+        });
+    },
+    animateOut: function animateOut(el, onComplete) {
+        (0, _animejs2.default)({
+            targets: el,
+            opacity: 0,
+            marginTop: '-40px',
+            duration: duration,
+            easing: 'easeOutExpo',
+            complete: onComplete
+        });
+    },
+    animateReset: function animateReset(el) {
+        (0, _animejs2.default)({
+            targets: el,
+            left: 0,
+            opacity: 1,
+            duration: duration,
+            easing: 'easeOutExpo'
+        });
+    },
+    animatePanning: function animatePanning(el, left, opacity) {
+        (0, _animejs2.default)({
+            targets: el,
+            duration: 10,
+            easing: 'easeOutQuad',
+            left: left,
+            opacity: opacity
+        });
+    },
+    animatePanEnd: function animatePanEnd(el, onComplete) {
+        (0, _animejs2.default)({
+            targets: el,
+            opacity: 0,
+            duration: duration,
+            easing: 'easeOutExpo',
+            complete: onComplete
+        });
+    },
+    clearAnimation: function clearAnimation(toasts) {
+
+        var timeline = _animejs2.default.timeline();
+
+        toasts.forEach(function (t) {
+            timeline.add({
+                targets: t.el,
+                opacity: 0,
+                right: '-40px',
+                duration: 300,
+                offset: '-=150',
+                easing: 'easeOutExpo',
+                complete: function complete() {
+                    t.destroy();
+                }
+            });
+        });
+    }
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -468,7 +572,7 @@ module.exports = encode;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -483,6 +587,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var _toasted = __webpack_require__(1);
 
 _toasted.Toasted.extend = _toasted.Extender.hook;
+_toasted.Toasted.utils = _toasted.Extender.utils;
 
 (function (root, factory) {
 	if (true) {
@@ -502,7 +607,7 @@ _toasted.Toasted.extend = _toasted.Extender.hook;
 exports.default = _toasted.Toasted;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -515,32 +620,67 @@ exports.Toast = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _hammerjs = __webpack_require__(5);
+var _hammerjs = __webpack_require__(6);
 
 var _hammerjs2 = _interopRequireDefault(_hammerjs);
 
 var _toasted = __webpack_require__(1);
 
-var _animations = __webpack_require__(6);
+var _animations = __webpack_require__(2);
 
 var _animations2 = _interopRequireDefault(_animations);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var uuid = __webpack_require__(8);
+
 var Toast = exports.Toast = function Toast(instance) {
 	var _this = this;
 
+	/**
+  * Compiled options of the toast
+  */
 	this.options = {};
+
+	/**
+  * Unique id for the toast
+  */
+	this.id = uuid.generate();
+
+	/**
+  * Toast Html Element
+  *
+  * @type {null|Element}
+  */
 	this.toast = null;
 
+	/**
+  * Check if Initialized the toast
+  *
+  * @type {boolean}
+  */
+	var initialized = false;
+
+	var constructor = function constructor() {
+		instance.toasts.push(_this);
+	};
+	constructor();
+
+	/**
+  * Create Toast
+  *
+  * @param message
+  * @param options
+  * @returns {Toast}
+  */
 	this.create = function (message, options) {
 
-		if (!message) {
+		if (!message || initialized) {
 			return;
 		}
 
-		options = _this.setOptions(options);
-		var container = _this.getContainer();
+		options = setOptions(options);
+		var container = getContainer();
 
 		_this.toast = document.createElement('div');
 		_this.toast.classList.add('toasted');
@@ -572,19 +712,19 @@ var Toast = exports.Toast = function Toast(instance) {
 		}
 
 		// Append the Message
-		_this.appendMessage(message);
+		appendMessage(message);
 
 		// add the touch events of the toast
-		_this.addTouchEvents();
+		addTouchEvents();
 
 		// create and append actions
 		if (Array.isArray(options.action)) {
 			options.action.forEach(function (action) {
-				var el = _this.createAction(action);
+				var el = createAction(action);
 				if (el) _this.toast.appendChild(el);
 			});
 		} else if (_typeof(options.action) === 'object') {
-			var action = _this.createAction(options.action);
+			var action = createAction(options.action);
 			if (action) _this.toast.appendChild(action);
 		}
 
@@ -595,12 +735,23 @@ var Toast = exports.Toast = function Toast(instance) {
 		_animations2.default.animateIn(_this.toast);
 
 		// set its duration
-		_this.setDuration();
+		setDuration();
+
+		// TODO : remove this later, this is here to backward compatibility
+		_this.el = _this.toast;
+
+		// Let Instance know the toast is initialized
+		initialized = true;
 
 		return _this;
 	};
 
-	this.appendMessage = function (message) {
+	/**
+  * Append Message to the Toast
+  *
+  * @param message
+  */
+	var appendMessage = function appendMessage(message) {
 
 		if (!message) {
 			return;
@@ -615,7 +766,12 @@ var Toast = exports.Toast = function Toast(instance) {
 		}
 	};
 
-	this.getContainer = function () {
+	/**
+  * Get the Toast Container
+  *
+  * @returns {Element}
+  */
+	var getContainer = function getContainer() {
 
 		var container = document.getElementById(instance.id);
 
@@ -636,7 +792,13 @@ var Toast = exports.Toast = function Toast(instance) {
 		return container;
 	};
 
-	this.setOptions = function (options) {
+	/**
+  * Parse and Set Toast Options
+  *
+  * @param options
+  * @returns {*}
+  */
+	var setOptions = function setOptions(options) {
 
 		// class name to be added on the toast
 		options.className = options.className || null;
@@ -710,7 +872,10 @@ var Toast = exports.Toast = function Toast(instance) {
 		return options;
 	};
 
-	this.addTouchEvents = function () {
+	/**
+  * Add Hammer Touch events to the Toast
+  */
+	var addTouchEvents = function addTouchEvents() {
 
 		var toast = _this.toast;
 
@@ -739,13 +904,11 @@ var Toast = exports.Toast = function Toast(instance) {
 			if (Math.abs(deltaX) > activationDistance) {
 
 				_animations2.default.animatePanEnd(toast, function () {
-					if (typeof options.onComplete === "function") {
-						options.onComplete();
+					if (typeof _this.options.onComplete === "function") {
+						_this.options.onComplete();
 					}
 
-					if (toast.parentNode) {
-						toast.parentNode.removeChild(toast);
-					}
+					_this.destroy();
 				});
 			} else {
 				toast.classList.remove('panning');
@@ -755,7 +918,13 @@ var Toast = exports.Toast = function Toast(instance) {
 		});
 	};
 
-	this.createAction = function (action) {
+	/**
+  * Create Actions to the toast
+  *
+  * @param action
+  * @returns {*}
+  */
+	var createAction = function createAction(action) {
 
 		if (!action) {
 			return null;
@@ -820,7 +989,10 @@ var Toast = exports.Toast = function Toast(instance) {
 		return el;
 	};
 
-	this.setDuration = function () {
+	/**
+  * Set Toast duration to fade away
+  */
+	var setDuration = function setDuration() {
 
 		// Allows timer to be pause while being panned
 		var timeLeft = _this.options.duration;
@@ -839,11 +1011,10 @@ var Toast = exports.Toast = function Toast(instance) {
 
 					_animations2.default.animateOut(_this.toast, function () {
 						// Call the optional callback
-						if (typeof options.onComplete === "function") options.onComplete();
+						if (typeof _this.options.onComplete === "function") _this.options.onComplete();
+
 						// Remove toast after it times out
-						if (_this.toast.parentNode) {
-							_this.toast.parentNode.removeChild(_this.toast);
-						}
+						_this.destroy();
 					});
 
 					window.clearInterval(counterInterval);
@@ -852,22 +1023,46 @@ var Toast = exports.Toast = function Toast(instance) {
 		}
 	};
 
+	/**
+  * Change Text of the Toast
+  *
+  * @param message
+  * @returns {Toast}
+  */
 	this.text = function (message) {
-		_this.appendMessage(message);
+		appendMessage(message);
 		return _this;
 	};
 
+	/**
+  * Delete the Toast with Animation and Delay
+  *
+  * @param delay
+  * @returns {boolean}
+  */
 	this.delete = function () {
 		var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
 
 
 		setTimeout(function () {
 			_animations2.default.animateOut(_this.toast, function () {
-				if (_this.toast.parentNode) _this.toast.parentNode.removeChild(_this.toast);
+				_this.destroy();
 			});
 		}, delay);
 
 		return true;
+	};
+
+	/**
+  * Destroy the Toast and Unregister from Instance
+  */
+	this.destroy = function () {
+
+		instance.toasts = instance.toasts.filter(function (t) {
+			return t.id !== _this.id;
+		});
+
+		if (_this.toast.parentNode) _this.toast.parentNode.removeChild(_this.toast);
 	};
 
 	/**
@@ -876,14 +1071,6 @@ var Toast = exports.Toast = function Toast(instance) {
   */
 	this.goAway = function (delay) {
 		return _this.delete(delay);
-	};
-
-	/**
-  * @deprecated since 0.0.11
-  * @param message
-  */
-	this.changeText = function (message) {
-		return _this.text(message);
 	};
 
 	/**
@@ -898,7 +1085,7 @@ var Toast = exports.Toast = function Toast(instance) {
 exports.default = Toast;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -3548,74 +3735,6 @@ if (true) {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _animejs = __webpack_require__(7);
-
-var _animejs2 = _interopRequireDefault(_animejs);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var duration = 300;
-
-exports.default = {
-    animateIn: function animateIn(el) {
-        (0, _animejs2.default)({
-            targets: el,
-            translateY: '-35px',
-            opacity: 1,
-            duration: duration,
-            easing: 'easeOutCubic'
-        });
-    },
-    animateOut: function animateOut(el, onComplete) {
-        (0, _animejs2.default)({
-            targets: el,
-            opacity: 0,
-            marginTop: '-40px',
-            duration: duration,
-            easing: 'easeOutExpo',
-            complete: onComplete
-        });
-    },
-    animateReset: function animateReset(el) {
-        (0, _animejs2.default)({
-            targets: el,
-            left: 0,
-            opacity: 1,
-            duration: duration,
-            easing: 'easeOutExpo'
-        });
-    },
-    animatePanning: function animatePanning(el, left, opacity) {
-        (0, _animejs2.default)({
-            targets: el,
-            duration: 10,
-            easing: 'easeOutQuad',
-            left: left,
-            opacity: opacity
-        });
-    },
-    animatePanEnd: function animatePanEnd(el, onComplete) {
-        (0, _animejs2.default)({
-            targets: el,
-            opacity: 0,
-            duration: duration,
-            easing: 'easeOutExpo',
-            complete: onComplete
-        });
-    }
-};
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3667,7 +3786,7 @@ module.exports = __webpack_require__(9);
 
 
 var alphabet = __webpack_require__(0);
-var encode = __webpack_require__(2);
+var encode = __webpack_require__(3);
 var decode = __webpack_require__(12);
 var build = __webpack_require__(13);
 var isValid = __webpack_require__(14);
@@ -3815,7 +3934,7 @@ module.exports = decode;
 "use strict";
 
 
-var encode = __webpack_require__(2);
+var encode = __webpack_require__(3);
 var alphabet = __webpack_require__(0);
 
 // Ignore all milliseconds before a certain time to reduce the size of the date entropy without sacrificing uniqueness.

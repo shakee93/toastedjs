@@ -1,20 +1,59 @@
 import Hammer from 'hammerjs';
 import {Extender} from './toasted';
 import animations from './animations'
+const uuid = require('shortid');
 
 export const Toast = function (instance) {
 
+	/**
+	 * Compiled options of the toast
+	 */
 	this.options = {};
+
+
+	/**
+	 * Unique id for the toast
+	 */
+	this.id = uuid.generate();
+
+
+	/**
+	 * Toast Html Element
+	 *
+	 * @type {null|Element}
+	 */
 	this.toast = null;
 
+
+	/**
+	 * Check if Initialized the toast
+	 *
+	 * @type {boolean}
+	 */
+	let initialized = false;
+
+
+	let constructor = () => {
+		instance.toasts.push(this);
+	};
+	constructor();
+
+
+	/**
+	 * Create Toast
+	 *
+	 * @param message
+	 * @param options
+	 * @returns {Toast}
+	 */
 	this.create = (message, options) => {
 
-		if(!message) {
+		if(!message || initialized) {
 			return;
 		}
 
-		options = this.setOptions(options);
-		let container = this.getContainer();
+		options = setOptions(options);
+		let container = getContainer();
 
 		this.toast = document.createElement('div');
 		this.toast.classList.add('toasted');
@@ -49,20 +88,20 @@ export const Toast = function (instance) {
 		}
 
 		// Append the Message
-		this.appendMessage(message);
+		appendMessage(message);
 
 		// add the touch events of the toast
-		this.addTouchEvents();
+		addTouchEvents();
 
 		// create and append actions
 		if (Array.isArray(options.action)) {
 			options.action.forEach((action) => {
-				let el = this.createAction(action);
+				let el = createAction(action);
 				if (el) this.toast.appendChild(el)
 			})
 		}
 		else if (typeof options.action === 'object') {
-			let action = this.createAction(options.action);
+			let action = createAction(options.action);
 			if (action) this.toast.appendChild(action)
 		}
 
@@ -73,12 +112,23 @@ export const Toast = function (instance) {
 		animations.animateIn(this.toast);
 
 		// set its duration
-		this.setDuration();
+		setDuration();
+
+		// TODO : remove this later, this is here to backward compatibility
+		this.el = this.toast;
+
+		// Let Instance know the toast is initialized
+		initialized = true;
 
 		return this;
 	};
 
-	this.appendMessage = (message) => {
+	/**
+	 * Append Message to the Toast
+	 *
+	 * @param message
+	 */
+	let appendMessage = (message) => {
 
 		if(!message) {
 			return;
@@ -95,7 +145,13 @@ export const Toast = function (instance) {
 
 	}
 
-	this.getContainer = () => {
+
+	/**
+	 * Get the Toast Container
+	 *
+	 * @returns {Element}
+	 */
+	let getContainer = () => {
 
 		let container = document.getElementById(instance.id);
 
@@ -116,7 +172,14 @@ export const Toast = function (instance) {
 		return container;
 	}
 
-	this.setOptions = (options) => {
+
+	/**
+	 * Parse and Set Toast Options
+	 *
+	 * @param options
+	 * @returns {*}
+	 */
+	let setOptions = (options) => {
 
 		// class name to be added on the toast
 		options.className = options.className || null;
@@ -190,7 +253,11 @@ export const Toast = function (instance) {
 	    return options;
 	}
 
-	this.addTouchEvents = () => {
+
+	/**
+	 * Add Hammer Touch events to the Toast
+	 */
+	let addTouchEvents = () => {
 
 		let toast = this.toast;
 
@@ -213,21 +280,19 @@ export const Toast = function (instance) {
 
 		});
 
-		hammerHandler.on('panend', function (e) {
+		hammerHandler.on('panend', (e)  =>{
 			let deltaX = e.deltaX;
 			let activationDistance = 80;
 
 			// If toast dragged past activation point
 			if (Math.abs(deltaX) > activationDistance) {
 
-				animations.animatePanEnd(toast, function () {
-					if (typeof(options.onComplete) === "function") {
-						options.onComplete();
+				animations.animatePanEnd(toast, () => {
+					if (typeof(this.options.onComplete) === "function") {
+						this.options.onComplete();
 					}
 
-					if (toast.parentNode) {
-						toast.parentNode.removeChild(toast);
-					}
+					this.destroy();
 				})
 
 			} else {
@@ -240,7 +305,14 @@ export const Toast = function (instance) {
 
 	}
 
-	this.createAction  = (action) => {
+
+	/**
+	 * Create Actions to the toast
+	 *
+	 * @param action
+	 * @returns {*}
+	 */
+	let createAction  = (action) => {
 
 		if (!action) {
 			return null;
@@ -305,7 +377,11 @@ export const Toast = function (instance) {
 
 	}
 
-	this.setDuration = () => {
+
+	/**
+	 * Set Toast duration to fade away
+	 */
+	let setDuration = () => {
 
 		// Allows timer to be pause while being panned
 		let timeLeft = this.options.duration;
@@ -325,12 +401,11 @@ export const Toast = function (instance) {
 
 					animations.animateOut(this.toast, () => {
 						// Call the optional callback
-						if (typeof(options.onComplete) === "function")
-							options.onComplete();
+						if (typeof(this.options.onComplete) === "function")
+							this.options.onComplete();
+
 						// Remove toast after it times out
-						if (this.toast.parentNode) {
-							this.toast.parentNode.removeChild(this.toast);
-						}
+						this.destroy();
 
 					})
 
@@ -341,20 +416,44 @@ export const Toast = function (instance) {
 
 	}
 
+	/**
+	 * Change Text of the Toast
+	 *
+	 * @param message
+	 * @returns {Toast}
+	 */
 	this.text = (message) => {
-		this.appendMessage(message);
+		appendMessage(message);
 		return this;
 	}
 
+	/**
+	 * Delete the Toast with Animation and Delay
+	 *
+	 * @param delay
+	 * @returns {boolean}
+	 */
 	this.delete = (delay = 300) => {
 
 		setTimeout(() => {
 			animations.animateOut(this.toast, () => {
-				if (this.toast.parentNode) this.toast.parentNode.removeChild(this.toast)
+				this.destroy();
 			})
 		}, delay);
 
 		return true;
+	}
+
+	/**
+	 * Destroy the Toast and Unregister from Instance
+	 */
+	this.destroy = () => {
+
+		instance.toasts = instance.toasts.filter((t) => {
+			return t.id !== this.id;
+		})
+
+		if (this.toast.parentNode) this.toast.parentNode.removeChild(this.toast)
 	}
 
 	/**
@@ -365,19 +464,13 @@ export const Toast = function (instance) {
 		return this.delete(delay);
 	}
 
-	/**
-	 * @deprecated since 0.0.11
-	 * @param message
-	 */
-	this.changeText = (message) => {
-	    return this.text(message)
-	}
 
 	/**
 	 * @deprecated since 0.0.11
 	 * @type {*}
 	 */
 	this.el = this.toast;
+
 
 	return this;
 };
