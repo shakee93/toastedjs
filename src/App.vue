@@ -18,19 +18,43 @@
 
                                 <div class="input">
                                     <label for="message" >Message</label>
-                                    <input id="message" type="text">
+                                    <input id="message" type="text" v-model="text">
+                                </div>
+
+                                <div class="input">
+                                    <label for="theme" >Theme</label>
+
+                                    <select name="theme" id="theme">
+                                        <option value="alive">Alive</option>
+                                        <option value="material">Material</option>
+                                        <option value="colombo">Colombo</option>
+                                        <option value="venice">Venice</option>
+                                    </select>
+
                                 </div>
 
                                 <div class="input">
                                     <label for="duration" >Duration</label>
-                                    <input id="duration" type="text">
+
+                                    <select name="duration" id="duration">
+                                        <option value="null" selected>Infinity</option>
+                                        <option value="500">0.5 Seconds</option>
+                                        <option value="1000">1 Second</option>
+                                        <option value="2000">2 Seconds</option>
+                                        <option value="5000">5 Seconds</option>
+                                        <option value="30000">30 Seconds</option>
+                                        <option value="60000">1 Minute</option>
+                                    </select>
+
                                 </div>
+
+                                <br>
 
                                 <div class="input">
                                     <label >Position</label>
                                     <div class="input-position">
-                                        <label  v-for="p in positions" :class="{ 'active' : p.position == position }" class="circle">
-                                            <input class="hidden" type="radio" :value="p.position" name="position" v-model="position">
+                                        <label  v-tooltip.top="`${p}`" v-for="p in positions" :class="{ 'active' : p == data.position }" class="circle">
+                                            <input class="hidden" type="radio" :value="p" name="position" v-model="data.position">
                                         </label>
                                     </div>
                                 </div>
@@ -59,36 +83,39 @@
 </template>
 
 <script>
+
+	require('jquery');
+	require('./libs/nice-select');
+
 	export default {
 		name: 'app',
 		data () {
 			return {
-				position : 'top-left',
-				positions : [
-					{
-						position : 'top-left',
-                    },
-                    {
-						position : 'top-center'
-                    },
-                    {
-						position : 'top-right'
-                    },
-                    {
-						position : 'bottom-left'
-                    },
-                    {
-						position : 'bottom-center'
-                    },
-                    {
-						position : 'bottom-right'
-                    },
-
-                ],
-				msg: 'Welcome to Your Vue.js App'
+				positions : ['top-left','top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+                text : 'Awesome !!' ,
+                data : {
+					position : 'top-left',
+                    duration : 100,
+	                theme : null
+                }
 			}
-		}
+		},
+        mounted(){
+	        let vm = this;
+
+	        $(document).ready(function() {
+		        $('select').niceSelect();
+
+		        $('.nice-select .list li').on('click', function () {
+
+		        	let $id = $(this).parent().parent().prev().attr('id');
+
+			        vm.data[$id] = $(this).data('value');
+			        vm.$forceUpdate();
+		        })
+	        });
+        }
 	}
 </script>
 
-<style src="./assets/app.scss" lang="scss"></style>
+<style src="./sass/app.scss" lang="scss"></style>

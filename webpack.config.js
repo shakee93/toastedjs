@@ -40,7 +40,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      jquery: "jquery/src/jquery"
     }
   },
   devServer: {
@@ -70,6 +71,10 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    })
+    }),
+	  new webpack.ProvidePlugin({
+		  $: "jquery",
+		  jQuery: "jquery"
+	  })
   ])
 }

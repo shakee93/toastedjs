@@ -1,0 +1,12 @@
+$blue : #007fff;
+$font : #262c3a;
+$darker : #142744;
+
+$gray_light : $blue;
+$gray : $blue;
+
+
+@mixin active-input {
+  border-color: darken($blue, 5%);
+  box-shadow: 0 1px 14px 0 rgba(10, 21, 84, 0.24);
+}
