@@ -2,7 +2,12 @@
 @import '~node-reset-scss/scss/reset';
 @import '~flexboxgrid';
 @import './nice-select';
+
 @import "~vue-directive-tooltip/src/css/index.scss";
+@import "~toastedjs/src/sass/toast.scss";
+
+@import './alive';
+@import './material';
 
 ::selection {
   background: #f3f4f7;
@@ -41,6 +46,18 @@ body {
     font-family: Lato,sans-serif;
     font-size: 60px;
     font-weight:300;
+  }
+
+  .btn {
+    background: #0f86ff;
+    color: white;
+    border: none;
+    padding: 0.8em 1.8em;
+    font-size: 1.2em;
+    border-radius: 3px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-decoration: none;
   }
 
   .nice-select {
@@ -178,7 +195,11 @@ body {
       min-height: 400px;
       background: white;
       box-shadow: 0 12px 44px 0 rgba(10,21,84,.24);
-      padding: 4em;
+      padding: 4em 4em 2em;
+
+      .t-actions {
+        margin-top: 4em;
+      }
     }
 
     footer {
