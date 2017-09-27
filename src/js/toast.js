@@ -65,33 +65,18 @@ export const Toast = function (instance) {
 			});
 		}
 
-		// add material icon if available
-		if (options.icon) {
 
-			let iel = document.createElement('i');
-			iel.classList.add('material-icons');
-
-			if (options.icon.after && options.icon.name) {
-				iel.textContent = options.icon.name;
-				iel.classList.add('after');
-				message += iel.outerHTML
-			}
-			else if (options.icon.name) {
-				iel.textContent = options.icon.name;
-				message = iel.outerHTML + message
-			}
-			else {
-				iel.textContent = options.icon;
-				message = iel.outerHTML + message
-			}
-
-		}
 
 		// Append the Message
 		appendMessage(message);
 
 		// add the touch events of the toast
 		addTouchEvents();
+
+
+		// add material icon if available
+		createIcon();
+
 
 		// create and append actions
 		if (Array.isArray(options.action)) {
@@ -104,6 +89,9 @@ export const Toast = function (instance) {
 			let action = createAction(options.action);
 			if (action) this.toast.appendChild(action)
 		}
+
+
+
 
 		// append the toasts
 		container.appendChild(this.toast);
@@ -194,7 +182,10 @@ export const Toast = function (instance) {
 		options.duration = options.duration || null;
 
 		// normal type will allow the basic color
-		options.theme = options.theme || "primary";
+		options.color = options.color || null;
+
+		// normal type will allow the basic color
+		options.theme = options.theme || "material";
 
 		// normal type will allow the basic color
 		options.type = options.type || "default";
@@ -207,6 +198,9 @@ export const Toast = function (instance) {
 
 		// get icon name
 		options.icon = options.icon || null;
+
+		// get icon color
+		options.iconColor = options.iconColor || null;
 
 		// get action name
 		options.action = options.action || null;
@@ -306,6 +300,37 @@ export const Toast = function (instance) {
 	}
 
 
+	let createIcon = () => {
+
+		let options = this.options;
+
+		// add material icon if available
+		if (options.icon) {
+
+			let iel = document.createElement('i');
+			iel.classList.add('material-icons');
+
+			// add color to the icon. priority : icon.color > option.color > theme
+			iel.style.color = (options.icon.color) ? options.icon.color : options.color;
+
+			if (options.icon.after && options.icon.name) {
+				iel.textContent = options.icon.name;
+				iel.classList.add('after');
+				this.toast.appendChild(iel);
+			}
+			else if (options.icon.name) {
+				iel.textContent = options.icon.name;
+				this.toast.insertBefore(iel, this.toast.firstChild);
+			}
+			else {
+				iel.textContent = options.icon;
+				this.toast.insertBefore(iel, this.toast.firstChild);
+			}
+
+		}
+
+	}
+
 	/**
 	 * Create Actions to the toast
 	 *
@@ -319,6 +344,10 @@ export const Toast = function (instance) {
 		}
 
 		let el = document.createElement('a');
+
+		// add color to icon
+		el.style.color = (action.color) ? action.color : options.color;
+
 		el.classList.add('action');
 		el.classList.add('ripple');
 

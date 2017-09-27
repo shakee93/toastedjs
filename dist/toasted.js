@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -192,7 +192,7 @@ exports.Toasted = exports.Extender = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _toast = __webpack_require__(5);
+var _toast = __webpack_require__(6);
 
 var _toast2 = _interopRequireDefault(_toast);
 
@@ -202,7 +202,7 @@ var _animations2 = _interopRequireDefault(_animations);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var uuid = __webpack_require__(8);
+var uuid = __webpack_require__(3);
 
 
 // add Object.assign Polyfill
@@ -445,7 +445,16 @@ var Toasted = exports.Toasted = function Toasted(_options) {
   * @returns {boolean}
   */
 	this.clear = function () {
-		_animations2.default.clearAnimation(_this.toasts);
+
+		var toasts = _this.toasts;
+		var last = toasts.slice(-1)[0];
+
+		// start vanishing from the bottom if toasts are on top
+		if (last && last.options.position.includes('top')) {
+			toasts = toasts.reverse();
+		}
+
+		_animations2.default.clearAnimation(toasts);
 		_this.toasts = [];
 	};
 
@@ -470,7 +479,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _animejs = __webpack_require__(7);
+var _animejs = __webpack_require__(8);
 
 var _animejs2 = _interopRequireDefault(_animejs);
 
@@ -551,6 +560,15 @@ exports.default = {
 
 "use strict";
 
+module.exports = __webpack_require__(9);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var randomByte = __webpack_require__(11);
 
@@ -572,7 +590,7 @@ module.exports = encode;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -607,7 +625,7 @@ _toasted.Toasted.utils = _toasted.Extender.utils;
 exports.default = _toasted.Toasted;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -620,7 +638,7 @@ exports.Toast = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _hammerjs = __webpack_require__(6);
+var _hammerjs = __webpack_require__(7);
 
 var _hammerjs2 = _interopRequireDefault(_hammerjs);
 
@@ -632,7 +650,7 @@ var _animations2 = _interopRequireDefault(_animations);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var uuid = __webpack_require__(8);
+var uuid = __webpack_require__(3);
 
 var Toast = exports.Toast = function Toast(instance) {
 	var _this = this;
@@ -692,30 +710,14 @@ var Toast = exports.Toast = function Toast(instance) {
 			});
 		}
 
-		// add material icon if available
-		if (options.icon) {
-
-			var iel = document.createElement('i');
-			iel.classList.add('material-icons');
-
-			if (options.icon.after && options.icon.name) {
-				iel.textContent = options.icon.name;
-				iel.classList.add('after');
-				message += iel.outerHTML;
-			} else if (options.icon.name) {
-				iel.textContent = options.icon.name;
-				message = iel.outerHTML + message;
-			} else {
-				iel.textContent = options.icon;
-				message = iel.outerHTML + message;
-			}
-		}
-
 		// Append the Message
 		appendMessage(message);
 
 		// add the touch events of the toast
 		addTouchEvents();
+
+		// add material icon if available
+		createIcon();
 
 		// create and append actions
 		if (Array.isArray(options.action)) {
@@ -813,7 +815,10 @@ var Toast = exports.Toast = function Toast(instance) {
 		options.duration = options.duration || null;
 
 		// normal type will allow the basic color
-		options.theme = options.theme || "primary";
+		options.color = options.color || null;
+
+		// normal type will allow the basic color
+		options.theme = options.theme || "material";
 
 		// normal type will allow the basic color
 		options.type = options.type || "default";
@@ -826,6 +831,9 @@ var Toast = exports.Toast = function Toast(instance) {
 
 		// get icon name
 		options.icon = options.icon || null;
+
+		// get icon color
+		options.iconColor = options.iconColor || null;
 
 		// get action name
 		options.action = options.action || null;
@@ -918,6 +926,33 @@ var Toast = exports.Toast = function Toast(instance) {
 		});
 	};
 
+	var createIcon = function createIcon() {
+
+		var options = _this.options;
+
+		// add material icon if available
+		if (options.icon) {
+
+			var iel = document.createElement('i');
+			iel.classList.add('material-icons');
+
+			// add color to the icon. priority : icon.color > option.color > theme
+			iel.style.color = options.icon.color ? options.icon.color : options.color;
+
+			if (options.icon.after && options.icon.name) {
+				iel.textContent = options.icon.name;
+				iel.classList.add('after');
+				_this.toast.appendChild(iel);
+			} else if (options.icon.name) {
+				iel.textContent = options.icon.name;
+				_this.toast.insertBefore(iel, _this.toast.firstChild);
+			} else {
+				iel.textContent = options.icon;
+				_this.toast.insertBefore(iel, _this.toast.firstChild);
+			}
+		}
+	};
+
 	/**
   * Create Actions to the toast
   *
@@ -931,6 +966,10 @@ var Toast = exports.Toast = function Toast(instance) {
 		}
 
 		var el = document.createElement('a');
+
+		// add color to icon
+		el.style.color = action.color ? action.color : options.color;
+
 		el.classList.add('action');
 		el.classList.add('ripple');
 
@@ -1085,7 +1124,7 @@ var Toast = exports.Toast = function Toast(instance) {
 exports.default = Toast;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -3735,7 +3774,7 @@ if (true) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -3770,15 +3809,6 @@ n.speed=1;n.running=q;n.remove=function(a){a=M(a);for(var b=q.length;b--;)for(va
 b.duration=0;b.add=function(a){b.children.forEach(function(a){a.began=!0;a.completed=!0});w(a).forEach(function(a){var c=b.duration,d=a.offset;a.autoplay=!1;a.offset=g.und(d)?c:K(d,c);b.seek(a.offset);a=n(a);a.duration>c&&(b.duration=a.duration);a.began=!0;b.children.push(a)});b.reset();b.seek(0);b.autoplay&&b.restart();return b};return b};n.random=function(a,b){return Math.floor(Math.random()*(b-a+1))+a};return n});
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = __webpack_require__(9);
-
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3786,7 +3816,7 @@ module.exports = __webpack_require__(9);
 
 
 var alphabet = __webpack_require__(0);
-var encode = __webpack_require__(3);
+var encode = __webpack_require__(4);
 var decode = __webpack_require__(12);
 var build = __webpack_require__(13);
 var isValid = __webpack_require__(14);
@@ -3934,7 +3964,7 @@ module.exports = decode;
 "use strict";
 
 
-var encode = __webpack_require__(3);
+var encode = __webpack_require__(4);
 var alphabet = __webpack_require__(0);
 
 // Ignore all milliseconds before a certain time to reduce the size of the date entropy without sacrificing uniqueness.
