@@ -1,34 +1,16 @@
-.toasted {
-  &.alive {
-    border-radius: 2px;
-    min-height: 38px;
-    line-height: 1.1em;
-    background-color: white;
-    padding: 0 20px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #007FFF;
-    box-shadow: 0 12px 44px 0 rgba(10, 21, 84, 0.24);
+@include toasted-theme('alive') {
 
-    &.success {
-      color: #4CAF50;
-    }
+  font-weight: 700;
+  border-radius: 2px;
+  background-color: white;
+  color: #007FFF;
+  box-shadow: 0 12px 44px 0 rgba(10, 21, 84, 0.24);
 
-    &.error {
-      color: #F44336;
-    }
+  @include toasted-theme-type('success', #4CAF50);
+  @include toasted-theme-type('error', #F44336);
+  @include toasted-theme-type('info',#3F51B5);
 
-    &.info {
-      color: #3F51B5;
-    }
-
-    .action {
-      color: #007FFF;
-    }
-
-    .material-icons {
-      color : #FFC107;
-    }
-  }
+  @include toasted-theme-part('action', #007FFF);
+  @include toasted-theme-part('material-icons', #FFC107);
 
 }

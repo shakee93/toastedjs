@@ -346,10 +346,9 @@ export const Toast = function (instance) {
 		let el = document.createElement('a');
 
 		// add color to icon
-		el.style.color = (action.color) ? action.color : options.color;
+		el.style.color = (action.color) ? action.color : this.options.color;
 
 		el.classList.add('action');
-		el.classList.add('ripple');
 
 		if (action.text) {
 			el.text = action.text
