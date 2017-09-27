@@ -250,7 +250,16 @@ export const Toasted = function (_options) {
 	 * @returns {boolean}
 	 */
 	this.clear = () => {
-		animations.clearAnimation(this.toasts);
+
+		let toasts = this.toasts;
+		let last = toasts.slice(-1)[0];
+
+		// start vanishing from the bottom if toasts are on top
+		if(last && last.options.position.includes('top')) {
+			toasts = toasts.reverse();
+		}
+
+		animations.clearAnimation(toasts);
 		this.toasts = [];
 	}
 
