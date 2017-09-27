@@ -1,0 +1,23 @@
+@include toasted-theme('bootstrap') {
+
+  color: #31708f;
+  background-color: #f9fbfd;
+  border: 1px solid transparent;
+  border-color: #d9edf7;
+  border-radius: .25rem;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+
+  @include toasted-theme-type('success', #3c763d, #dff0d8) {
+    border-color: #d0e9c6;
+  };
+
+  @include toasted-theme-type('error', #a94442, #f2dede) {
+    border-color: #f2dede;
+  };
+
+  @include toasted-theme-type('info', #31708f, #d9edf7) {
+    border-color: #d9edf7;
+  };
+
+}

@@ -1,0 +1,14 @@
+@include toasted-theme('bulma') {
+
+  background-color: #00d1b2;
+  color: #fff;
+  border-radius: 3px;
+  font-weight: 700;
+
+  @include toasted-theme-type('success', #fff, #23d160);
+
+  @include toasted-theme-type('error', #a94442, #ff3860);
+
+  @include toasted-theme-type('info', #fff, #3273dc);
+
+}

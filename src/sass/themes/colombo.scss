@@ -1,0 +1,27 @@
+@include toasted-theme('colombo') {
+
+  border-radius: 6px;
+  color: #7492b1;
+  border: 2px solid #7492b1;
+  background: white;
+  font-weight: 700;
+
+  &:after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background-color: #5e7b9a;
+    position: absolute;
+    top: -4px;
+    left: -5px;
+    border-radius: 100%;
+  }
+
+  @include toasted-theme-type('success', #4CAF50);
+  @include toasted-theme-type('error', #F44336);
+  @include toasted-theme-type('info',#3F51B5);
+
+  @include toasted-theme-part('action', #007FFF);
+  @include toasted-theme-part('material-icons', #5dcccd);
+
+}
