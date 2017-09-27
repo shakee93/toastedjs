@@ -79,7 +79,7 @@
 					.addClass('option' +
 						($option.is(':selected') ? ' selected' : '') +
 						($option.is(':disabled') ? ' disabled' : ''))
-					.html($option.text())
+					.html($option.html())
 				);
 			});
 		}
