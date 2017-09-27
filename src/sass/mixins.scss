@@ -35,18 +35,18 @@
 
 
 /**
-  @param : $name : name of the theme
-  @clean : blank toast colors
+  $name : name of the theme
+  $defaults : have the default values
  */
-@mixin toasted-theme($name, $clean : false){
+@mixin toasted-theme($name, $defaults : true){
 
   .toasted {
     &.#{$name} {
-      @if($clean) {
-        min-height: 38px;
+      @if($defaults) {
+        padding: 0 20px;
+        min-height: 2.25em;
         font-size: 100%;
         line-height: 1.1em;
-        padding: 0 20px;
       }
       @content;
     }

@@ -1,33 +1,24 @@
-.toasted {
-  &.outline {
-    border-radius: 30px;
-    min-height: 38px;
-    line-height: 1.1em;
-    background-color: white;
-    border: 1px solid #676767;
-    padding: 0 20px;
-    font-size: 15px;
-    color: #676767;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    font-weight: bold;
+@include toasted-theme('outline') {
 
-    &.success {
-      color: #4CAF50;
-      border-color: #4CAF50;
-    }
+  font-weight: bold;
+  border-radius: 30px;
+  color: #676767;
+  background-color: white;
+  border: 1px solid #676767;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 
-    &.error {
-      color: #F44336;
-      border-color: #F44336;
-    }
+  @include toasted-theme-type('success', #4CAF50) {
+    border-color: #4CAF50;
+  };
 
-    &.info {
-      color: #3F51B5;
-      border-color: #3F51B5;
-    }
+  @include toasted-theme-type('error', #F44336) {
+    border-color: #F44336;
+  };
 
-    .action {
-      color: #607d8b;
-    }
-  }
+  @include toasted-theme-type('info',#3F51B5) {
+    border-color: #3F51B5;
+  };
+
+  @include toasted-theme-part('action', #607d8b);
+
 }
