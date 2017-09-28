@@ -70,16 +70,18 @@
 
                                 <div class="input">
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 col-xs-6">
                                             <label for="theme" >Full Width</label>
                                             <div class="switch">
-                                                <input type="checkbox" id="fullWidth" v-model="data.fullWidth" /><label class="switch-label" for="fullWidth" >Full Width</label>
+                                                <input type="checkbox" id="fullWidth" v-model="data.fullWidth" />
+                                                <label class="switch-label" for="fullWidth" >Full Width</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-9" v-show="data.fullWidth">
+                                        <div class="col-md-9 col-xs-6" v-show="data.fullWidth">
                                             <label for="theme" >Fit To Screen</label>
                                             <div class="switch">
-                                                <input type="checkbox" id="fitToScreen" v-model="data.fitToScreen" /><label class="switch-label" for="fitToScreen" >Full Width</label>
+                                                <input type="checkbox" id="fitToScreen" v-model="data.fitToScreen" />
+                                                <label class="switch-label" for="fitToScreen" >Full Width</label>
                                             </div>
                                         </div>
 
