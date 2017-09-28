@@ -22,7 +22,7 @@ body {
   font-size: 14px;
 
   #app {
-    background-image: url(/toasted/src/assets/bg.png);
+    background-image: url(https://shakee93.github.io/toasted/src/assets/bg.png);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom;
@@ -63,7 +63,6 @@ body {
   .nice-select {
     width: 100%;
     min-width: 150px;
-    max-width: 300px;
     border: 2px solid $blue;
 
     &.open {
@@ -131,7 +130,6 @@ body {
       font-size: 1em;
       width: 100%;
       min-width: 150px;
-      max-width: 300px;
       letter-spacing: 0.03em;
       transition : box-shadow .3s, border-color .3s;
       box-sizing: border-box;
@@ -199,6 +197,7 @@ body {
 
       .t-actions {
         margin-top: 4em;
+        margin-bottom: 2em;
       }
     }
 

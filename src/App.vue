@@ -14,7 +14,7 @@
 
                     <div class="t-container">
                         <div class="row t-inputs">
-                            <div class="col-md-6 col-xs-6">
+                            <div class="col-md-6 col-xs-12">
                                 <div class="input">
                                     <label for="message" >Message</label>
                                     <input id="message" type="text" v-model="text">
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-xs-6">
+                            <div class="col-md-6 col-xs-12">
                                 <div class="input">
                                     <label for="theme" >Theme</label>
 
@@ -54,6 +54,8 @@
                                         <option value="material">Material</option>
                                         <option value="colombo">Colombo</option>
                                         <option value="venice">Venice</option>
+                                        <option value="bootstrap">Bootstrap</option>
+                                        <option value="bulma">Bulma</option>
                                     </select>
 
                                 </div>
