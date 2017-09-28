@@ -38,7 +38,7 @@
                                 <div class="input">
                                     <label >Position</label>
                                     <div class="input-position">
-                                        <label  v-tooltip.top="`${p}`" v-for="p in positions" :class="{ 'active' : p == data.position }" class="circle">
+                                        <label  v-for="p in positions" :class="{ 'active' : p == data.position }" class="circle">
                                             <input class="hidden" type="radio" :value="p" name="position" v-model="data.position">
                                         </label>
                                     </div>

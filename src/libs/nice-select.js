@@ -90,7 +90,7 @@
 		$(document).off('.nice_select');
 
 		// Open/close
-		$(document).on('click.nice_select', '.nice-select', function(event) {
+		$('.nice-select').on('click', function(event) {
 			var $dropdown = $(this);
 
 			$('.nice-select').not($dropdown).removeClass('open');
@@ -106,14 +106,14 @@
 		});
 
 		// Close when clicking outside
-		$(document).on('click.nice_select', function(event) {
+		$('#app').click(function(event) {
 			if ($(event.target).closest('.nice-select').length === 0) {
 				$('.nice-select').removeClass('open').find('.option');
 			}
 		});
 
 		// Option click
-		$(document).on('click.nice_select', '.nice-select .option:not(.disabled)', function(event) {
+		$('.nice-select .option:not(.disabled)').on('click', function(event) {
 			var $option = $(this);
 			var $dropdown = $option.closest('.nice-select');
 
@@ -127,7 +127,7 @@
 		});
 
 		// Keyboard events
-		$(document).on('keydown.nice_select', '.nice-select', function(event) {
+		$('.nice-select').on('keydown', function(event) {
 			var $dropdown = $(this);
 			var $focused_option = $($dropdown.find('.focus') || $dropdown.find('.list .option.selected'));
 
