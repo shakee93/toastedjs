@@ -392,7 +392,7 @@ export const Toast = function (instance) {
 
 				if (action.onClick) {
 					e.preventDefault()
-					action.onClick(e, toastObject)
+					action.onClick(e, this)
 				}
 
 			})
