@@ -719,16 +719,21 @@ var Toast = exports.Toast = function Toast(instance) {
 		// add material icon if available
 		createIcon();
 
+		var actionWrapper = document.createElement('span');
+		actionWrapper.classList.add('actions-wrapper');
+
 		// create and append actions
 		if (Array.isArray(options.action)) {
 			options.action.forEach(function (action) {
 				var el = createAction(action);
-				if (el) _this.toast.appendChild(el);
+				if (el) actionWrapper.appendChild(el);
 			});
 		} else if (_typeof(options.action) === 'object') {
 			var action = createAction(options.action);
-			if (action) _this.toast.appendChild(action);
+			if (action) actionWrapper.appendChild(action);
 		}
+
+		_this.toast.appendChild(actionWrapper);
 
 		// append the toasts
 		container.appendChild(_this.toast);
@@ -1014,7 +1019,7 @@ var Toast = exports.Toast = function Toast(instance) {
 
 				if (action.onClick) {
 					e.preventDefault();
-					action.onClick(e, toastObject);
+					action.onClick(e, _this);
 				}
 			});
 		}

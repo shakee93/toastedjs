@@ -77,20 +77,22 @@ export const Toast = function (instance) {
 		// add material icon if available
 		createIcon();
 
+		let actionWrapper = document.createElement('span');
+		actionWrapper.classList.add('actions-wrapper');
 
 		// create and append actions
 		if (Array.isArray(options.action)) {
 			options.action.forEach((action) => {
 				let el = createAction(action);
-				if (el) this.toast.appendChild(el)
+				if (el) actionWrapper.appendChild(el)
 			})
 		}
 		else if (typeof options.action === 'object') {
 			let action = createAction(options.action);
-			if (action) this.toast.appendChild(action)
+			if (action) actionWrapper.appendChild(action)
 		}
 
-
+		this.toast.appendChild(actionWrapper);
 
 
 		// append the toasts

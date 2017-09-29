@@ -7,6 +7,7 @@
   flex-direction: column;
   position: fixed;
   z-index: 10000;
+  align-items: baseline;
 
   &.full-width {
     display: flex;
@@ -35,6 +36,7 @@
   &.top-center {
     top: 10%;
     left: 50%;
+    align-items: center;
     transform: translateX(-50%);
   }
 
@@ -50,8 +52,9 @@
 
   &.bottom-center {
     left: 50%;
-    transform: translateX(-50%);
     bottom: 7%;
+    align-items: center;
+    transform: translateX(-50%);
   }
 
   // fix positioning floating
@@ -93,12 +96,20 @@
       text-decoration: none;
       font-size: 0.8rem;
       padding: 8px;
-      margin: 5px -7px 5px 7px;
+      margin: .4em;
       border-radius: 3px;
       text-transform: uppercase;
       letter-spacing: .03em;
       font-weight: 600;
       cursor: pointer;
+
+      &:first-child {
+        margin-left: -.4em;
+      }
+
+      &:last-child {
+        margin-right: -.4em;
+      }
 
       &.icon {
         padding: 4px;
