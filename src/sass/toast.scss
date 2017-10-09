@@ -7,7 +7,6 @@
   flex-direction: column;
   position: fixed;
   z-index: 10000;
-  align-items: baseline;
 
   &.full-width {
     display: flex;
@@ -26,11 +25,13 @@
   &.top-right {
     top: 10%;
     right: 7%;
+    align-items: flex-end;
   }
 
   &.top-left {
     top: 10%;
     left: 7%;
+    align-items: flex-start;
   }
 
   &.top-center {
@@ -43,11 +44,13 @@
   &.bottom-right {
     right: 5%;
     bottom: 7%;
+    align-items: flex-end;
   }
 
   &.bottom-left {
     left: 5%;
     bottom: 7%;
+    align-items: flex-start;
   }
 
   &.bottom-center {
@@ -92,45 +95,44 @@
     }
 
     // Toast Action Styling
-    .action {
-      text-decoration: none;
-      font-size: 0.8rem;
-      padding: 8px;
-      margin: .4em;
-      border-radius: 3px;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      font-weight: 600;
-      cursor: pointer;
+    .actions-wrapper {
+      margin-left: .8em;
+      margin-right: -.4em;
 
-      &:first-child {
-        margin-left: -.4em;
-      }
+      .action {
+        text-decoration: none;
+        font-size: 0.8rem;
+        padding: 8px;
+        margin: .4em;
+        border-radius: 3px;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        font-weight: 600;
+        cursor: pointer;
 
-      &:last-child {
-        margin-right: -.4em;
-      }
+        &.icon {
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-      &.icon {
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+          .material-icons {
+            margin-right: 0;
+            margin-left: 4px;
+          }
 
-        .material-icons {
-          margin-right: 0;
-          margin-left: 4px;
+          &:hover {
+            text-decoration: none;
+          }
         }
 
         &:hover {
-          text-decoration: none;
+          text-decoration: underline;
         }
       }
-
-      &:hover {
-        text-decoration: underline;
-      }
     }
+
+
   }
 }
 
