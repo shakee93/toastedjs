@@ -77,23 +77,8 @@ export const Toast = function (instance) {
 		// add material icon if available
 		createIcon();
 
-		let actionWrapper = document.createElement('span');
-		actionWrapper.classList.add('actions-wrapper');
-
-		// create and append actions
-		if (Array.isArray(options.action)) {
-			options.action.forEach((action) => {
-				let el = createAction(action);
-				if (el) actionWrapper.appendChild(el)
-			})
-		}
-		else if (typeof options.action === 'object') {
-			let action = createAction(options.action);
-			if (action) actionWrapper.appendChild(action)
-		}
-
-		this.toast.appendChild(actionWrapper);
-
+		// append the actions
+		appendActions();
 
 		// append the toasts
 		container.appendChild(this.toast);
@@ -407,6 +392,38 @@ export const Toast = function (instance) {
 
 	}
 
+
+	/**
+	 * Append actions to the toast
+	 */
+	let appendActions = () => {
+
+		let options = this.options;
+		let hasActions = false;
+
+		let actionWrapper = document.createElement('span');
+		actionWrapper.classList.add('actions-wrapper');
+
+		// create and append actions
+		if (Array.isArray(options.action)) {
+			options.action.forEach((action) => {
+				let el = createAction(action);
+				if (el) {
+					actionWrapper.appendChild(el);
+					hasActions = true;
+				}
+			})
+		}
+		else if (typeof options.action === 'object') {
+			let action = createAction(options.action);
+			if (action) {
+				actionWrapper.appendChild(action);
+				hasActions = true
+			}
+		}
+
+		if(hasActions) this.toast.appendChild(actionWrapper);
+	}
 
 	/**
 	 * Set Toast duration to fade away
