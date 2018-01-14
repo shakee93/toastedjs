@@ -58,6 +58,10 @@ body {
     font-weight: bold;
     letter-spacing: 0.5px;
     text-decoration: none;
+
+    &.btn-x {
+      font-size: 0.7em;
+    }
   }
 
   .nice-select {
@@ -101,14 +105,11 @@ body {
       li {
         width: 20%;
         float: left;
-        display: inline-block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 0;
         border-radius: 5px;
-
-        .material-icons {
-          margin-top: 12px;
-          margin-left: 16px;
-        }
 
       }
 
@@ -176,6 +177,19 @@ body {
           border-color: $blue;
           background: #f3f3f3;
           box-shadow: 0 5px 14px 0 rgba(10, 21, 84, 0.24);
+        }
+      }
+    }
+
+    .input-action {
+      margin-top: 1.5em;
+      margin-bottom: 1.3em;
+
+      .action-items {
+        margin-left: 1em;
+
+        .action {
+          margin-right: 0.4em;
         }
       }
     }

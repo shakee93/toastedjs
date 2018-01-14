@@ -36,9 +36,21 @@
                                 </div>
 
                                 <div class="input">
+                                    <label for="type" >Type</label>
+
+                                    <select name="type" id="type">
+                                        <option value="null" selected>Default</option>
+                                        <option value="success" >Success</option>
+                                        <option value="error" >Error</option>
+                                        <option value="info" >Info</option>
+                                    </select>
+
+                                </div>
+
+                                <div class="input">
                                     <label >Position</label>
                                     <div class="input-position">
-                                        <label  v-for="p in positions" :class="{ 'active' : p == data.position }" class="circle">
+                                        <label v-tooltip.top="`${p}`" v-for="p in positions" :class="{ 'active' : p == data.position }" class="circle">
                                             <input class="hidden" type="radio" :value="p" name="position" v-model="data.position">
                                         </label>
                                     </div>
@@ -69,6 +81,21 @@
                                 </div>
 
                                 <div class="input">
+                                    <label >Actions</label>
+                                    <div class="input-action">
+                                        <a href="" @click.prevent="add_action()" class="btn btn-x">Add</a>
+                                        <a href="" @click.prevent="data.action = []" class="btn btn-x darken">Clear</a>
+
+                                        <span class="action-items">
+                                            <transition-group name="fade" tag="span" >
+                                                <span :key="index" v-for="(action, index) in data.action" class="action" >{{ action.text }} {{ (index == data.action.length -1) ? '' : ' ,' }}</span>
+                                            </transition-group>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <div class="input">
                                     <div class="row">
                                         <div class="col-md-3 col-xs-6">
                                             <label for="theme" >Full Width</label>
@@ -87,6 +114,8 @@
 
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
 
@@ -134,7 +163,9 @@
 	                theme : 'alive',
                     icon : 'favorite_border',
                     fullWidth : false,
-                    fitToScreen : false
+                    fitToScreen : false,
+                    type : null,
+	                action : []
                 },
                 toasted : null
 			}
@@ -162,6 +193,25 @@
             },
             clear(){
 	            this.toasted.clear();
+            },
+	        add_action(){
+                let randActions = [
+                	'close',
+                    'push',
+                    'add',
+                    'save'
+                ]
+
+                if(this.data.action.length > 3) {
+                    return;
+                }
+
+                this.data.action.push({
+                    text : randActions[Math.floor(Math.random()*randActions.length)],
+                    onClick : (e, t) => {
+	                    t.delete(0);
+                    }
+                });
             }
         }
 	}

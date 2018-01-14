@@ -10,6 +10,10 @@ $blueish_grey_darker : darken($blueish_grey, 5%);
 $gray_light : $blue;
 $gray : $blue;
 
+.darken {
+  background: $darken !important;
+}
+
 @mixin shadow {
   box-shadow: 0 1px 14px 0 rgba(10, 21, 84, 0.24);
 }
@@ -17,7 +21,6 @@ $gray : $blue;
   border-color: darken($blue, 5%);
   @include shadow
 }
-
 
 @mixin scroll {
   &::-webkit-scrollbar {
@@ -53,4 +56,11 @@ $gray : $blue;
   &::-webkit-scrollbar-corner {
     background: transparent;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0
 }
