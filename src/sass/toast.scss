@@ -25,13 +25,19 @@
   &.top-right {
     top: 10%;
     right: 7%;
-    align-items: flex-end;
+
+    &:not(.full-width) {
+      align-items: flex-end;
+    }
   }
 
   &.top-left {
     top: 10%;
     left: 7%;
-    align-items: flex-start;
+
+    &:not(.full-width) {
+      align-items: flex-start;
+    }
   }
 
   &.top-center {
@@ -44,13 +50,19 @@
   &.bottom-right {
     right: 5%;
     bottom: 7%;
-    align-items: flex-end;
+
+    &:not(.full-width) {
+      align-items: flex-end;
+    }
   }
 
   &.bottom-left {
     left: 5%;
     bottom: 7%;
-    align-items: flex-start;
+
+    &:not(.full-width) {
+      align-items: flex-start;
+    }
   }
 
   &.bottom-center {
@@ -101,13 +113,14 @@
 
       .action {
         text-decoration: none;
-        font-size: 1rem;
+        font-size: 0.9rem;
         padding: 8px;
         border-radius: 3px;
         text-transform: uppercase;
         letter-spacing: .03em;
         font-weight: 600;
         cursor: pointer;
+        margin-right: .2rem;
 
         &.icon {
           padding: 4px;
