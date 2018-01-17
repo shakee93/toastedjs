@@ -27,7 +27,7 @@ unpkg (js) | [https://unpkg.com/toastedjs/dist/toasted.min.js](https://unpkg.com
 unpkg (css) | [https://unpkg.com/toastedjs/dist/toasted.min.css](https://unpkg.com/toastedjs/dist/toasted.min.css)
 jsdelivr | [https://jsdelivr.com/package/npm/toastedjs](https://jsdelivr.com/package/npm/toastedjs)
 
-### Basic Usage 
+## Basic Usage 
 
 #### ➡ ES6
 ```javascript
@@ -56,7 +56,7 @@ toasted.show('yo, toasted here !!')
 </script>
 ```
 
-### Guide 
+## Guide 
 
 #### ➡ Actions
 
@@ -93,4 +93,20 @@ action : {
 }
 ```
 
+## Api
 
+#### ➡ Options
+
+**Option**|**Type's**|**Default**|**Description**
+-----|-----|-----|-----
+**position**|String|'top-right'|Position of the toast container <br> **['top-right', 'top-center', 'top-left', 'bottom-right', 'bottom-center', 'bottom-left']**
+**duration**|Number|null|Display time of the toast in millisecond
+**action**|Object, Array|null|Add single or multiple actions to toast explained here
+**fullWidth**|Boolean|FALSE|Enable Full Width
+**fitToScreen**|Boolean|FALSE|Fits to Screen on Full Width
+**className**|String, Array|null|Custom css class name of the toast
+**containerClass**|String, Array|null|Custom css classes for toast container
+**Icon**|String, Object|null|Material icon name as string. explained here
+**type**|String|'default'|Type of the Toast <br> **['success', 'info', 'error']**
+**theme**|String|'primary'|Theme of the toast you prefer <br> **['primary', 'outline', 'bubble']**
+**onComplete**|Function|null|Trigger when toast is completed
