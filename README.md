@@ -101,7 +101,7 @@ action : {
 -----|-----|-----|-----
 **position**|String|'top-right'|Position of the toast container <br> **['top-right', 'top-center', 'top-left', 'bottom-right', 'bottom-center', 'bottom-left']**
 **duration**|Number|null|Display time of the toast in millisecond
-**action**|Object, Array|null|Add single or multiple actions to toast explained here
+**action**|Object, Array|null| [⬇ check action api below](#actions-api)
 **fullWidth**|Boolean|FALSE|Enable Full Width
 **fitToScreen**|Boolean|FALSE|Fits to Screen on Full Width
 **className**|String, Array|null|Custom css class name of the toast
@@ -110,3 +110,14 @@ action : {
 **type**|String|'default'|Type of the Toast <br> **['success', 'info', 'error']**
 **theme**|String|'primary'|Theme of the toast you prefer <br> **['primary', 'outline', 'bubble']**
 **onComplete**|Function|null|Trigger when toast is completed
+
+
+#### ➡ Actions
+
+**Parameters**|**Type's**|**Default**|**Description**
+-----|-----|-----|-----
+text*|String|-| name of action
+href|String|`null`| url of action
+icon|String|`null`| name of material for action
+class|String/Array|`null`| custom css class for the action
+onClick|Function(e,toastObject) |`null`|  onClick Function of action
