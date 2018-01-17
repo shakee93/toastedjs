@@ -99,7 +99,18 @@ action : {
 ## Api
 
 ### Options
-below are the options you can pass to create a toast
+below are the options you can pass to create a toast or you can set these options globally.
+
+```javascript
+// you can pass options either
+let toasted = new Toasted({
+    position : 'top-center',
+    theme : 'alive',
+    onComplete : () => {
+        console.log('i am done !')
+    }
+})
+```
 
 **Option**|**Type's**|**Default**|**Description**
 -----|-----|-----|-----
@@ -158,13 +169,23 @@ toasted.show( 'my message', { /* some new option */ })
 
 Each Toast Returns a Toast Instance where you can manipulate the toast.
 
+```javascript
+let toasted = new Toasted()
+
+let myToast = toasted.show("Holla !!")
+myToast.text("Changing the text !!!").delete(1500)
+
+let anotherToast = toasted.error("Oopss.. my bad !")
+anotherToast.text("Oopss.. it's okey..")
+```
+
 **Option**|**Type's**|**Description**
 -----|-----|-----
-options|Object|Options of the toast instance
-toast|HTMLElement|Html Element of the toast
-text|Function(message)|Change text of the toast
-delete|Function(delay = 300)|Delete the toast with animation and delay
-destroy|Function|Destroy the toast unregister from parent instance
+**options**|Object|Options of the toast instance
+**toast**|HTMLElement|Html Element of the toast
+**text**|Function(message)|Change text of the toast
+**delete**|Function(delay = 300)|Delete the toast with animation and delay
+**destroy**|Function|Destroy the toast unregister from parent instance
 
 
 ## Browsers support
