@@ -29,7 +29,7 @@ jsdelivr | [https://jsdelivr.com/package/npm/toastedjs](https://jsdelivr.com/pac
 
 ## Basic Usage 
 
-#### ➡ ES6
+#### ES6
 ```javascript
 
 import Toasted from 'toastedjs'
@@ -42,7 +42,7 @@ toasted.show('yo, toasted here !!')
 
 ```
 
-#### ➡ Direct
+#### Direct
 ```html
 <!-- pull the css -->
 <link rel="stylesheet" href="https://unpkg.com/toastedjs/dist/toasted.min.css">
@@ -58,7 +58,7 @@ toasted.show('yo, toasted here !!')
 
 ## Guide 
 
-#### ➡ Actions
+#### Actions
 
 Actions are used to make the toasts interactive **(save, undo, cancel, close)**, you can have **one or more** options on a single toast.
 
@@ -76,7 +76,7 @@ action : {
 }
 ```
 
-#### ➡ Icons
+#### Icons
 
 [Material Icons](http://google.github.io/material-design-icons/) and [Fontawesome](http://fontawesome.io/cheatsheet/) are supported. you will have to import the icon packs into your project.
 
@@ -95,24 +95,24 @@ action : {
 
 ## Api
 
-#### ➡ Options
+#### Options
 
 **Option**|**Type's**|**Default**|**Description**
 -----|-----|-----|-----
 **position**|String|'top-right'|Position of the toast container <br> **['top-right', 'top-center', 'top-left', 'bottom-right', 'bottom-center', 'bottom-left']**
 **duration**|Number|null|Display time of the toast in millisecond
-**action**|Object, Array|null| [⬇ check action api below](#actions-api)
+**action**|Object, Array|null| [⬇ check action api below](#-actions-1)
 **fullWidth**|Boolean|FALSE|Enable Full Width
 **fitToScreen**|Boolean|FALSE|Fits to Screen on Full Width
 **className**|String, Array|null|Custom css class name of the toast
 **containerClass**|String, Array|null|Custom css classes for toast container
-**Icon**|String, Object|null|Material icon name as string. explained here
+**Icon**|String, Object|null| [⬇ check icons api below](#-icons-1)
 **type**|String|'default'|Type of the Toast <br> **['success', 'info', 'error']**
 **theme**|String|'primary'|Theme of the toast you prefer <br> **['primary', 'outline', 'bubble']**
 **onComplete**|Function|null|Trigger when toast is completed
 
 
-#### ➡ Actions
+#### Actions
 
 **Parameters**|**Type's**|**Default**|**Description**
 -----|-----|-----|-----
@@ -121,3 +121,11 @@ href|String|`null`| url of action
 icon|String|`null`| name of material for action
 class|String/Array|`null`| custom css class for the action
 onClick|Function(e,toastObject) |`null`|  onClick Function of action
+
+#### Icons
+
+**Parameters**|**Type's**|**Default**|**Description**
+-----|-----|-----|-----
+name*|String|-| name of the icon
+color|String|`null`| color of the icon
+after|Boolean|`null`| append the icon to end of toast
