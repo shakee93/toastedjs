@@ -113,11 +113,6 @@ export const Toasted = function (_options) {
 	 */
 	let _show = (message, options) => {
 
-		if (typeof options !== "object") {
-			Extender.utils.warn(`Options should be a type of object. given : ${options}`);
-			return null;
-		}
-
 		// clone the global options
 		let _options = Object.assign({}, this.options);
 

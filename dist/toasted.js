@@ -190,8 +190,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Toasted = exports.Extender = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _toast = __webpack_require__(6);
 
 var _toast2 = _interopRequireDefault(_toast);
@@ -312,11 +310,6 @@ var Toasted = exports.Toasted = function Toasted(_options) {
   * @private
   */
 	var _show = function _show(message, options) {
-
-		if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== "object") {
-			Extender.utils.warn('Options should be a type of object. given : ' + options);
-			return null;
-		}
 
 		// clone the global options
 		var _options = Object.assign({}, _this.options);
@@ -794,44 +787,46 @@ var Toast = exports.Toast = function Toast(instance) {
   */
 	var setOptions = function setOptions(options) {
 
-		// class name to be added on the toast
-		options.className = options.className || null;
-
-		// complete call back of the toast
-		options.onComplete = options.onComplete || null;
-
 		// toast position
 		options.position = options.position || "top-right";
 
 		// toast duration
 		options.duration = options.duration || null;
 
+		// get action name
+		options.action = options.action || null;
+
+		// check if the fullWidth is enabled
+		options.fullWidth = options.fullWidth || false;
+
+		// check if the toast needs to be fitted in the screen (no margin gap between screen)
+		options.fitToScreen = options.fitToScreen || null;
+
+		// class name to be added on the toast
+		options.className = options.className || null;
+
+		// class name to be added on the toast container
+		options.containerClass = options.containerClass || null;
+
+		// get icon name
+		options.icon = options.icon || null;
+
 		// normal type will allow the basic color
-		options.color = options.color || null;
+		options.type = options.type || "default";
 
 		// normal type will allow the basic color
 		options.theme = options.theme || "material";
 
 		// normal type will allow the basic color
-		options.type = options.type || "default";
-
-		// class name to be added on the toast container
-		options.containerClass = options.containerClass || null;
-
-		// check if the fullWidth is enabled
-		options.fullWidth = options.fullWidth || false;
-
-		// get icon name
-		options.icon = options.icon || null;
+		options.color = options.color || null;
 
 		// get icon color
 		options.iconColor = options.iconColor || null;
 
-		// get action name
-		options.action = options.action || null;
+		// complete call back of the toast
+		options.onComplete = options.onComplete || null;
 
-		// check if the toast needs to be fitted in the screen (no margin gap between screen)
-		options.fitToScreen = options.fitToScreen || null;
+		// TODO : closeOnSwipe, singleton, iconPack
 
 		/* transform options */
 
@@ -860,7 +855,7 @@ var Toast = exports.Toast = function Toast(instance) {
 		options.fullWidth && options.containerClass.push('full-width');
 		options.fitToScreen && options.containerClass.push('fit-to-screen');
 
-		// add toasted container class
+		// add toasted container class to top
 		options.containerClass.unshift('toasted-container');
 
 		// HOOK : options
