@@ -17,6 +17,7 @@
     "es": "babel src --presets babel-preset-es2015 --out-dir dist"
   },
   "keywords": [
+    "toast",
     "toasted",
     "toastedjs",
     "vue-toasted"
