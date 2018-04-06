@@ -11,7 +11,7 @@
 
 ## Introduction
 
-toasted is responsive, touch compatible, easy to use, attractive and feature rich with icons, actions etc...
+toastedjs is heir of [vue-toasted](https://github.com/shakee93/vue-toasted) it is responsive, touch compatible, easy to use, attractive and feature rich with icons, actions etc...
 
 ### Interactive demo
 
