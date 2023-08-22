@@ -56,6 +56,10 @@ export const Toast = function (instance) {
 		let container = getContainer();
 
 		this.toast = document.createElement('div');
+		
+		// Add aria-live attribute to make the toast's notifications live and announce them to screen readers
+    		this.toast.setAttribute('aria-live', 'polite');
+
 		this.toast.classList.add('toasted');
 
 		// add classes
@@ -132,6 +136,7 @@ export const Toast = function (instance) {
 
 		if(container === null) {
 			container = document.createElement('div');
+			
 			container.id = instance.id;
 			document.body.appendChild(container);
 		}
